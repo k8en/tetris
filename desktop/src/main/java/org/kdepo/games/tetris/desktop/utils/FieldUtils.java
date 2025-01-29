@@ -78,6 +78,12 @@ public class FieldUtils {
                 if (figureData[row][column] == 0) {
                     continue;
                 }
+                if (figureFieldCellX + column >= fieldData[row].length) {
+                    return false;
+                }
+                if (figureFieldCellY + row >= fieldData.length) {
+                    return false;
+                }
                 if (fieldData[figureFieldCellY + row][figureFieldCellX + column] != 0) {
                     return false;
                 }

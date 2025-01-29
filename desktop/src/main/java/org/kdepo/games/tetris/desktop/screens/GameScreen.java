@@ -36,6 +36,8 @@ public class GameScreen extends AbstractScreen {
     private int linesCount;
     private int score;
 
+    private long controlsTimer;
+
     public GameScreen() {
         this.name = Constants.Screens.GAME;
 
@@ -65,6 +67,8 @@ public class GameScreen extends AbstractScreen {
 
         linesCount = 0;
         score = 0;
+
+        controlsTimer = System.currentTimeMillis();
     }
 
     @Override
@@ -89,34 +93,40 @@ public class GameScreen extends AbstractScreen {
 
                 } else {
                     System.out.println("New figure generated");
-                    currentFigure = FigureUtils.getNextFigure();
+                    currentFigure = nextFigure;
+                    nextFigure = FigureUtils.getNextFigure();
 
                     currentFigureFieldCellX = 3;
                     currentFigureFieldCellY = 0;
                 }
             }
 
-        } else if (keyHandler.isRightPressed()) {
+        } else if (keyHandler.isRightPressed() && isControlsReady()) {
             if (FieldUtils.canMoveRight(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
                 currentFigureFieldCellX = currentFigureFieldCellX + 1;
             }
+            resetControlsTimer();
 
-        } else if (keyHandler.isLeftPressed()) {
+        } else if (keyHandler.isLeftPressed() && isControlsReady()) {
             if (FieldUtils.canMoveLeft(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
                 currentFigureFieldCellX = currentFigureFieldCellX - 1;
             }
+            resetControlsTimer();
 
         } else if (keyHandler.isDownPressed()) {
             if (FieldUtils.canMoveDown(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
                 currentFigureFieldCellY = currentFigureFieldCellY + 1;
             }
-        } else if (keyHandler.isSpacePressed()) {
+            resetControlsTimer();
+        } else if (keyHandler.isSpacePressed() && isControlsReady()) {
             Figure rotatedFigure = FigureUtils.getRotatedFigure(currentFigure);
-            if (FieldUtils.canPlaceFigure(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
+            if (FieldUtils.canPlaceFigure(field.getData(), rotatedFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
                 currentFigure.setOrientationId(rotatedFigure.getOrientationId());
                 currentFigure.setData(rotatedFigure.getData());
             }
+            resetControlsTimer();
         }
+
     }
 
     @Override
@@ -126,11 +136,25 @@ public class GameScreen extends AbstractScreen {
 
         figurePreview.render(g);
         figurePreview.renderFigure(g, nextFigure, 0, 0);
+
+        g.drawString("Score", 350, 170);
+        g.drawString(String.valueOf(score), 420, 170);
+
+        g.drawString("Lines", 350, 185);
+        g.drawString(String.valueOf(linesCount), 420, 185);
     }
 
     @Override
     public void dispose() {
 
+    }
+
+    private boolean isControlsReady() {
+        return System.currentTimeMillis() > controlsTimer;
+    }
+
+    private void resetControlsTimer() {
+        controlsTimer = System.currentTimeMillis() + 100;
     }
 
     private void updateStatistics(int linesCount) {
