@@ -82,6 +82,21 @@ public class GameScreen extends AbstractScreen {
                     currentFigureFieldCellY = 0;
                 }
             }
+
+        } else if (keyHandler.isRightPressed()) {
+            if (FieldUtils.canMoveRight(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
+                currentFigureFieldCellX = currentFigureFieldCellX + 1;
+            }
+
+        } else if (keyHandler.isLeftPressed()) {
+            if (FieldUtils.canMoveLeft(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
+                currentFigureFieldCellX = currentFigureFieldCellX - 1;
+            }
+
+        } else if (keyHandler.isDownPressed()) {
+            if (FieldUtils.canMoveDown(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
+                currentFigureFieldCellY = currentFigureFieldCellY + 1;
+            }
         }
     }
 

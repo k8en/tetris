@@ -32,6 +32,42 @@ public class FieldUtils {
         return true;
     }
 
+    public static boolean canMoveRight(int[][] fieldData, int[][] figureData, int figureFieldCellX, int figureFieldCellY) {
+        for (int row = 0; row < figureData.length; row++) {
+            for (int column = 0; column < figureData[row].length; column++) {
+                if (figureData[row][column] == 0) {
+                    continue;
+                }
+                if (figureFieldCellX + column + 1 >= fieldData[row].length) {
+                    return false;
+                }
+                if (fieldData[figureFieldCellY + row][figureFieldCellX + column + 1] != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    public static boolean canMoveLeft(int[][] fieldData, int[][] figureData, int figureFieldCellX, int figureFieldCellY) {
+        for (int row = 0; row < figureData.length; row++) {
+            for (int column = 0; column < figureData[row].length; column++) {
+                if (figureData[row][column] == 0) {
+                    continue;
+                }
+                if (figureFieldCellX + column - 1 < 0) {
+                    return false;
+                }
+                if (fieldData[figureFieldCellY + row][figureFieldCellX + column - 1] != 0) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     public static void mergeData(int[][] fieldData, int[][] figureData, int figureFieldCellX, int figureFieldCellY) {
         for (int row = 0; row < figureData.length; row++) {
             for (int column = 0; column < figureData[row].length; column++) {
