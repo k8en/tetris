@@ -6,14 +6,14 @@ import java.awt.*;
 
 public class FigurePreview {
 
-    private final int x;
-    private final int y;
+    private final int screenPositionX;
+    private final int screenPositionY;
     private final int columns;
     private final int rows;
 
-    public FigurePreview(int x, int y, int columns, int rows) {
-        this.x = x;
-        this.y = y;
+    public FigurePreview(int screenPositionX, int screenPositionY, int columns, int rows) {
+        this.screenPositionX = screenPositionX;
+        this.screenPositionY = screenPositionY;
         this.columns = columns;
         this.rows = rows;
     }
@@ -21,10 +21,26 @@ public class FigurePreview {
     public void render(Graphics2D g) {
         // Draw grid
         for (int row = 0; row <= rows; row++) {
-            g.drawLine(x, y + row * Constants.BLOCK_SIZE, x + rows * Constants.BLOCK_SIZE, y + row * Constants.BLOCK_SIZE);
+            g.drawLine(screenPositionX, screenPositionY + row * Constants.BLOCK_SIZE, screenPositionX + rows * Constants.BLOCK_SIZE, screenPositionY + row * Constants.BLOCK_SIZE);
         }
         for (int column = 0; column <= columns; column++) {
-            g.drawLine(x + column * Constants.BLOCK_SIZE, y, x + column * Constants.BLOCK_SIZE, y + columns * Constants.BLOCK_SIZE);
+            g.drawLine(screenPositionX + column * Constants.BLOCK_SIZE, screenPositionY, screenPositionX + column * Constants.BLOCK_SIZE, screenPositionY + columns * Constants.BLOCK_SIZE);
+        }
+    }
+
+    public void renderFigure(Graphics2D g, Figure figure, int fieldPositionX, int fieldPositionY) {
+        for (int figureRow = 0; figureRow < figure.getData().length; figureRow++) {
+            for (int figureColumn = 0; figureColumn < figure.getData()[0].length; figureColumn++) {
+
+                if (figure.getData()[figureRow][figureColumn] == 1) {
+                    g.fillRect(
+                            screenPositionX + (fieldPositionX + figureColumn) * Constants.BLOCK_SIZE,
+                            screenPositionY + (fieldPositionY + figureRow) * Constants.BLOCK_SIZE,
+                            Constants.BLOCK_SIZE,
+                            Constants.BLOCK_SIZE
+                    );
+                }
+            }
         }
     }
 }

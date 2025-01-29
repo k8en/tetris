@@ -17,54 +17,63 @@ public class GameScreen extends AbstractScreen {
     private Figure nextFigure;
     private Figure currentFigure;
 
-    private int figureCellX;
-    private int figureCellY;
+    private int currentFigureFieldCellX;
+    private int currentFigureFieldCellY;
 
-    private final int fieldX;
-    private final int fieldY;
+    private final int fieldScreenPositionX;
+    private final int fieldScreenPositionY;
     private Field field;
 
-    private final int fieldPreviewX;
-    private final int fieldPreviewY;
+    private final int fieldPreviewScreenPositionX;
+    private final int fieldPreviewScreenPositionY;
     private FigurePreview figurePreview;
+
+    private long nextStepTimer;
+    private final int nextStepDelay;
 
     public GameScreen() {
         this.name = Constants.Screens.GAME;
 
-        fieldX = 10;
-        fieldY = 10;
+        fieldScreenPositionX = 10;
+        fieldScreenPositionY = 10 + 100;
 
-        fieldPreviewX = 350;
-        fieldPreviewY = 10;
+        fieldPreviewScreenPositionX = 350;
+        fieldPreviewScreenPositionY = 10 + 100;
+
+        nextStepDelay = 1000;
+        nextStepTimer = System.currentTimeMillis() + nextStepDelay;
     }
 
     @Override
     public void initialize(Map<String, Object> parameters) {
-        field = new Field(fieldX, fieldY);
-        figurePreview = new FigurePreview(fieldPreviewX, fieldPreviewY, 4, 4);
+        field = new Field();
+        field.setScreenPositionX(fieldScreenPositionX);
+        field.setScreenPositionY(fieldScreenPositionY);
 
-        nextFigure = new Figure(fieldPreviewX, fieldPreviewY);
-        nextFigure.setData(FigureUtils.getNextFigure());
+        figurePreview = new FigurePreview(fieldPreviewScreenPositionX, fieldPreviewScreenPositionY, 4, 4);
 
-        figureCellX = 3;
-        figureCellY = 0;
+        nextFigure = FigureUtils.getNextFigure();
+        currentFigure = FigureUtils.getNextFigure();
 
-        currentFigure = new Figure(fieldX + figureCellX * Constants.BLOCK_SIZE, fieldY + figureCellY * Constants.BLOCK_SIZE);
-        currentFigure.setData(FigureUtils.getNextFigure());
+        currentFigureFieldCellX = 3;
+        currentFigureFieldCellY = 0;
     }
 
     @Override
     public void update(KeyHandler keyHandler, MouseHandler mouseHandler) {
-
+        if (System.currentTimeMillis() >= nextStepTimer) {
+            currentFigureFieldCellY = currentFigureFieldCellY + 1;
+            nextStepTimer = System.currentTimeMillis() + nextStepDelay;
+        }
     }
 
     @Override
     public void render(Graphics2D g) {
         field.render(g);
-        currentFigure.render(g);
+        field.renderFigure(g, currentFigure, currentFigureFieldCellX, currentFigureFieldCellY);
 
         figurePreview.render(g);
-        nextFigure.render(g);
+        figurePreview.renderFigure(g, nextFigure, 0, 0);
     }
 
     @Override

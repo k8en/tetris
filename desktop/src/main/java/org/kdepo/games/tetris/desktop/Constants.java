@@ -2,8 +2,9 @@ package org.kdepo.games.tetris.desktop;
 
 public class Constants {
 
-    public static final int BLOCKS_HORIZONTALLY = 10;
-    public static final int BLOCKS_VERTICALLY = 20;
+    public static final int FIELD_ROWS_HIDDEN = 4;
+    public static final int FIELD_BLOCKS_HORIZONTALLY = 10;
+    public static final int FIELD_BLOCKS_VERTICALLY = 20;
 
     public static final int BLOCK_SIZE = 32;
 

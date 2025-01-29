@@ -1,5 +1,7 @@
 package org.kdepo.games.tetris.desktop.utils;
 
+import org.kdepo.games.tetris.desktop.model.Figure;
+
 import java.util.List;
 import java.util.Random;
 
@@ -66,14 +68,18 @@ public class FigureUtils {
             FIGURE_07
     );
 
-    public static int[][] getNextFigure() {
-        int figureIndex = RND.nextInt(7);
-        System.out.println("Next figure selected " + figureIndex);
-        int[][] figure = FIGURES.get(figureIndex);
-        int[][] nextFigure = new int[figure.length][figure[0].length];
-        for (int row = 0; row < figure.length; row++) {
-            System.arraycopy(figure[row], 0, nextFigure[row], 0, figure[0].length);
+    public static Figure getNextFigure() {
+        //int figureIndex = RND.nextInt(7);
+        int figureId = 4;
+        int orientationId = 0;
+
+        System.out.println("Next figure selected " + figureId);
+        int[][] figureDataToCopy = FIGURES.get(figureId);
+        int[][] figureData = new int[figureDataToCopy.length][figureDataToCopy[0].length];
+        for (int row = 0; row < figureDataToCopy.length; row++) {
+            System.arraycopy(figureDataToCopy[row], 0, figureData[row], 0, figureDataToCopy[0].length);
         }
-        return nextFigure;
+
+        return new Figure(figureId, orientationId, figureData);
     }
 }

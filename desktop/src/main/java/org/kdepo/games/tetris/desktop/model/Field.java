@@ -6,31 +6,74 @@ import java.awt.*;
 
 public class Field {
 
-    private final int x;
-    private final int y;
+    private int screenPositionX;
+    private int screenPositionY;
 
     private final int[][] data;
 
-    public Field(int x, int y) {
-        this.x = x;
-        this.y = y;
-        data = new int[Constants.BLOCKS_VERTICALLY + 4][Constants.BLOCKS_HORIZONTALLY];
+    public Field() {
+        data = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
+    }
+
+    public int getScreenPositionX() {
+        return screenPositionX;
+    }
+
+    public void setScreenPositionX(int screenPositionX) {
+        this.screenPositionX = screenPositionX;
+    }
+
+    public int getScreenPositionY() {
+        return screenPositionY;
+    }
+
+    public void setScreenPositionY(int screenPositionY) {
+        this.screenPositionY = screenPositionY;
     }
 
     public void render(Graphics2D g) {
         // Draw grid
-        for (int row = 0; row <= data.length - 4; row++) {
-            g.drawLine(x, y + row * Constants.BLOCK_SIZE, x + Constants.BLOCKS_HORIZONTALLY * Constants.BLOCK_SIZE, y + row * Constants.BLOCK_SIZE);
+        for (int row = 0; row <= data.length - Constants.FIELD_ROWS_HIDDEN; row++) {
+            g.drawLine(
+                    screenPositionX,
+                    screenPositionY + row * Constants.BLOCK_SIZE,
+                    screenPositionX + Constants.FIELD_BLOCKS_HORIZONTALLY * Constants.BLOCK_SIZE,
+                    screenPositionY + row * Constants.BLOCK_SIZE
+            );
         }
         for (int column = 0; column <= data[0].length; column++) {
-            g.drawLine(x + column * Constants.BLOCK_SIZE, y, x + column * Constants.BLOCK_SIZE, y + Constants.BLOCKS_VERTICALLY * Constants.BLOCK_SIZE);
+            g.drawLine(
+                    screenPositionX + column * Constants.BLOCK_SIZE,
+                    screenPositionY,
+                    screenPositionX + column * Constants.BLOCK_SIZE,
+                    screenPositionY + Constants.FIELD_BLOCKS_VERTICALLY * Constants.BLOCK_SIZE
+            );
         }
 
-        // Draw data
-        for (int row = 0 + 4; row < data.length; row++) {
+        // Draw field data (skip hidden space)
+        for (int row = Constants.FIELD_ROWS_HIDDEN; row < data.length; row++) {
             for (int column = 0; column < data[0].length; column++) {
                 if (data[row][column] == 1) {
-                    g.fillRect(x + column * Constants.BLOCK_SIZE, y + row * Constants.BLOCK_SIZE, Constants.BLOCK_SIZE, Constants.BLOCK_SIZE);
+                    g.fillRect(screenPositionX + column * Constants.BLOCK_SIZE, screenPositionY + row * Constants.BLOCK_SIZE, Constants.BLOCK_SIZE, Constants.BLOCK_SIZE);
+                }
+            }
+        }
+    }
+
+    public void renderFigure(Graphics2D g, Figure figure, int fieldPositionX, int fieldPositionY) {
+        for (int figureRow = 0; figureRow < figure.getData().length; figureRow++) {
+            for (int figureColumn = 0; figureColumn < figure.getData()[0].length; figureColumn++) {
+
+                // If row is outside the hidden space
+                if (fieldPositionY + figureRow >= Constants.FIELD_ROWS_HIDDEN) {
+                    if (figure.getData()[figureRow][figureColumn] == 1) {
+                        g.fillRect(
+                                screenPositionX + (fieldPositionX + figureColumn) * Constants.BLOCK_SIZE,
+                                screenPositionY + (fieldPositionY + figureRow - Constants.FIELD_ROWS_HIDDEN) * Constants.BLOCK_SIZE,
+                                Constants.BLOCK_SIZE,
+                                Constants.BLOCK_SIZE
+                        );
+                    }
                 }
             }
         }
