@@ -4,6 +4,7 @@ import org.kdepo.games.tetris.desktop.Constants;
 import org.kdepo.games.tetris.desktop.model.Field;
 import org.kdepo.games.tetris.desktop.model.Figure;
 import org.kdepo.games.tetris.desktop.model.FigurePreview;
+import org.kdepo.games.tetris.desktop.utils.FieldUtils;
 import org.kdepo.games.tetris.desktop.utils.FigureUtils;
 import org.kdepo.graphics.k2d.KeyHandler;
 import org.kdepo.graphics.k2d.MouseHandler;
@@ -52,8 +53,8 @@ public class GameScreen extends AbstractScreen {
 
         figurePreview = new FigurePreview(fieldPreviewScreenPositionX, fieldPreviewScreenPositionY, 4, 4);
 
-        nextFigure = FigureUtils.getNextFigure();
-        currentFigure = FigureUtils.getNextFigure();
+        nextFigure = FigureUtils.getNextFigure(0);
+        currentFigure = FigureUtils.getNextFigure(0);
 
         currentFigureFieldCellX = 3;
         currentFigureFieldCellY = 0;
@@ -62,8 +63,25 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void update(KeyHandler keyHandler, MouseHandler mouseHandler) {
         if (System.currentTimeMillis() >= nextStepTimer) {
-            currentFigureFieldCellY = currentFigureFieldCellY + 1;
             nextStepTimer = System.currentTimeMillis() + nextStepDelay;
+
+            if (FieldUtils.canMoveDown(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
+                currentFigureFieldCellY = currentFigureFieldCellY + 1;
+
+            } else {
+                FieldUtils.mergeData(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY);
+
+                if (FieldUtils.isFieldOverflow(field.getData())) {
+                    System.out.println("Game Over");
+
+                } else {
+                    System.out.println("New figure generated");
+                    currentFigure = FigureUtils.getNextFigure(0);
+
+                    currentFigureFieldCellX = 3;
+                    currentFigureFieldCellY = 0;
+                }
+            }
         }
     }
 

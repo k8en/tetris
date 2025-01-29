@@ -9,7 +9,7 @@ public class Field {
     private int screenPositionX;
     private int screenPositionY;
 
-    private final int[][] data;
+    private int[][] data;
 
     public Field() {
         data = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
@@ -29,6 +29,14 @@ public class Field {
 
     public void setScreenPositionY(int screenPositionY) {
         this.screenPositionY = screenPositionY;
+    }
+
+    public int[][] getData() {
+        return data;
+    }
+
+    public void setData(int[][] data) {
+        this.data = data;
     }
 
     public void render(Graphics2D g) {
@@ -51,10 +59,17 @@ public class Field {
         }
 
         // Draw field data (skip hidden space)
-        for (int row = Constants.FIELD_ROWS_HIDDEN; row < data.length; row++) {
+        for (int row = 0; row < data.length; row++) {
+            if (row < Constants.FIELD_ROWS_HIDDEN) {
+                continue;
+            }
             for (int column = 0; column < data[0].length; column++) {
                 if (data[row][column] == 1) {
-                    g.fillRect(screenPositionX + column * Constants.BLOCK_SIZE, screenPositionY + row * Constants.BLOCK_SIZE, Constants.BLOCK_SIZE, Constants.BLOCK_SIZE);
+                    g.fillRect(
+                            screenPositionX + column * Constants.BLOCK_SIZE,
+                            screenPositionY + (row - Constants.FIELD_ROWS_HIDDEN) * Constants.BLOCK_SIZE,
+                            Constants.BLOCK_SIZE,
+                            Constants.BLOCK_SIZE);
                 }
             }
         }

@@ -69,8 +69,23 @@ public class FigureUtils {
     );
 
     public static Figure getNextFigure() {
-        //int figureIndex = RND.nextInt(7);
-        int figureId = 4;
+        int figureId = RND.nextInt(7);
+        int orientationId = 0;
+
+        System.out.println("Next figure selected " + figureId);
+        int[][] figureDataToCopy = FIGURES.get(figureId);
+        int[][] figureData = new int[figureDataToCopy.length][figureDataToCopy[0].length];
+        for (int row = 0; row < figureDataToCopy.length; row++) {
+            System.arraycopy(figureDataToCopy[row], 0, figureData[row], 0, figureDataToCopy[0].length);
+        }
+
+        return new Figure(figureId, orientationId, figureData);
+    }
+
+    public static Figure getNextFigure(int figureId) {
+        if (figureId < 0 || figureId >= 7) {
+            throw new RuntimeException("Figure ID is out of range: " + figureId);
+        }
         int orientationId = 0;
 
         System.out.println("Next figure selected " + figureId);
