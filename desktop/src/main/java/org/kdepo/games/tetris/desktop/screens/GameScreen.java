@@ -57,8 +57,8 @@ public class GameScreen extends AbstractScreen {
 
         figurePreview = new FigurePreview(fieldPreviewScreenPositionX, fieldPreviewScreenPositionY, 4, 4);
 
-        nextFigure = FigureUtils.getNextFigure(0);
-        currentFigure = FigureUtils.getNextFigure(0);
+        nextFigure = FigureUtils.getNextFigure();
+        currentFigure = FigureUtils.getNextFigure();
 
         currentFigureFieldCellX = 3;
         currentFigureFieldCellY = 0;
@@ -89,7 +89,7 @@ public class GameScreen extends AbstractScreen {
 
                 } else {
                     System.out.println("New figure generated");
-                    currentFigure = FigureUtils.getNextFigure(0);
+                    currentFigure = FigureUtils.getNextFigure();
 
                     currentFigureFieldCellX = 3;
                     currentFigureFieldCellY = 0;
@@ -109,6 +109,12 @@ public class GameScreen extends AbstractScreen {
         } else if (keyHandler.isDownPressed()) {
             if (FieldUtils.canMoveDown(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
                 currentFigureFieldCellY = currentFigureFieldCellY + 1;
+            }
+        } else if (keyHandler.isSpacePressed()) {
+            Figure rotatedFigure = FigureUtils.getRotatedFigure(currentFigure);
+            if (FieldUtils.canPlaceFigure(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
+                currentFigure.setOrientationId(rotatedFigure.getOrientationId());
+                currentFigure.setData(rotatedFigure.getData());
             }
         }
     }
