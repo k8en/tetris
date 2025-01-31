@@ -40,7 +40,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 3, orientation 0
+     * figure 2, orientation 0
      */
     private static final int[][] FIGURE_03 = {
             {0, 0, 0, 0},
@@ -50,7 +50,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 3, orientation 1
+     * figure 2, orientation 1
      */
     private static final int[][] FIGURE_03_1 = {
             {0, 0, 0, 0},
@@ -60,7 +60,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 3, orientation 2
+     * figure 2, orientation 2
      */
     private static final int[][] FIGURE_03_2 = {
             {0, 0, 0, 0},
@@ -70,7 +70,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 3, orientation 3
+     * figure 2, orientation 3
      */
     private static final int[][] FIGURE_03_3 = {
             {0, 0, 0, 0},
@@ -80,7 +80,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 4, orientations 0,2
+     * figure 3, orientations 0,2
      */
     private static final int[][] FIGURE_04 = {
             {0, 0, 0, 0},
@@ -90,7 +90,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 4, orientations 1,3
+     * figure 3, orientations 1,3
      */
     private static final int[][] FIGURE_04_1 = {
             {0, 0, 0, 0},
@@ -100,7 +100,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 5, orientations 0,2
+     * figure 4, orientations 0,2
      */
     private static final int[][] FIGURE_05 = {
             {0, 0, 0, 0},
@@ -110,7 +110,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 5, orientations 1,3
+     * figure 4, orientations 1,3
      */
     private static final int[][] FIGURE_05_1 = {
             {0, 0, 0, 0},
@@ -120,7 +120,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 6, orientation 0
+     * figure 5, orientation 0
      */
     private static final int[][] FIGURE_06 = {
             {0, 0, 0, 0},
@@ -130,7 +130,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 6, orientation 1
+     * figure 5, orientation 1
      */
     private static final int[][] FIGURE_06_1 = {
             {0, 0, 0, 0},
@@ -140,7 +140,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 6, orientation 2
+     * figure 5, orientation 2
      */
     private static final int[][] FIGURE_06_2 = {
             {0, 0, 0, 0},
@@ -150,7 +150,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 6, orientation 3
+     * figure 5, orientation 3
      */
     private static final int[][] FIGURE_06_3 = {
             {0, 0, 0, 0},
@@ -160,7 +160,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 7, orientation 0
+     * figure 6, orientation 0
      */
     private static final int[][] FIGURE_07 = {
             {0, 0, 0, 0},
@@ -170,7 +170,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 7, orientation 1
+     * figure 6, orientation 1
      */
     private static final int[][] FIGURE_07_1 = {
             {0, 0, 0, 0},
@@ -180,7 +180,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 7, orientation 2
+     * figure 6, orientation 2
      */
     private static final int[][] FIGURE_07_2 = {
             {0, 0, 0, 0},
@@ -190,7 +190,7 @@ public class FigureUtils {
     };
 
     /**
-     * figure 7, orientation 3
+     * figure 6, orientation 3
      */
     private static final int[][] FIGURE_07_3 = {
             {0, 0, 0, 0},
@@ -213,7 +213,7 @@ public class FigureUtils {
         int figureId = RND.nextInt(7);
         int orientationId = 0;
 
-        System.out.println("Next figure selected " + figureId);
+        //System.out.println("Next figure selected " + figureId);
         int[][] figureDataToCopy = FIGURES.get(figureId);
         int[][] figureData = new int[figureDataToCopy.length][figureDataToCopy[0].length];
         for (int row = 0; row < figureDataToCopy.length; row++) {
@@ -229,7 +229,7 @@ public class FigureUtils {
         }
         int orientationId = 0;
 
-        System.out.println("Next figure selected " + figureId);
+        //System.out.println("Next figure selected " + figureId);
         int[][] figureDataToCopy = FIGURES.get(figureId);
         int[][] figureData = new int[figureDataToCopy.length][figureDataToCopy[0].length];
         for (int row = 0; row < figureDataToCopy.length; row++) {

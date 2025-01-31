@@ -5,6 +5,7 @@ import org.kdepo.games.tetris.desktop.model.Field;
 import org.kdepo.games.tetris.desktop.model.Figure;
 import org.kdepo.games.tetris.desktop.model.FigurePreview;
 import org.kdepo.games.tetris.desktop.model.Statistics;
+import org.kdepo.games.tetris.desktop.utils.DataCollectionUtils;
 import org.kdepo.games.tetris.desktop.utils.FieldUtils;
 import org.kdepo.games.tetris.desktop.utils.FigureUtils;
 import org.kdepo.graphics.k2d.KeyHandler;
@@ -79,6 +80,8 @@ public class GameScreen extends AbstractScreen {
                 currentFigureFieldCellY = currentFigureFieldCellY + 1;
 
             } else {
+                DataCollectionUtils.collect(field.getData(), currentFigure, currentFigureFieldCellX, nextFigure);
+
                 FieldUtils.mergeData(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY);
 
                 // Collect figure statistics
@@ -100,13 +103,19 @@ public class GameScreen extends AbstractScreen {
                 if (!completedLinesIndexes.isEmpty()) {
                     updateStatistics(completedLinesIndexes.size());
                     FieldUtils.removeLines(field.getData(), completedLinesIndexes);
+
+                    if (statistics.getLines() >= 100) {
+                        System.out.println("Score: " + statistics.getScore());
+                        System.out.println("Lines: " + statistics.getLines());
+                        DataCollectionUtils.printCollectedData();
+                    }
                 }
 
                 if (FieldUtils.isFieldOverflow(field.getData())) {
                     System.out.println("Game Over");
 
                 } else {
-                    System.out.println("New figure generated");
+                    //System.out.println("New figure generated");
                     currentFigure = nextFigure;
                     nextFigure = FigureUtils.getNextFigure();
 

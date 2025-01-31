@@ -11,6 +11,7 @@
     <modules>
         <module>k2d</module>
         <module>desktop</module>
+        <module>bot</module>
     </modules>
 
     <properties>
