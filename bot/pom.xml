@@ -13,29 +13,32 @@
     <artifactId>bot</artifactId>
 
     <properties>
+        <dl4j-master.version>1.0.0-M2.1</dl4j-master.version>
+        <nd4j.backend>nd4j-native</nd4j.backend>
+
+
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dl4j.version>0.9.1</dl4j.version>
+        <dl4j.version>1.0.0-M2.1</dl4j.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-api</artifactId>
-            <version>${dl4j.version}</version>
+            <artifactId>${nd4j.backend}</artifactId>
+            <version>${dl4j-master.version}</version>
         </dependency>
 
-
         <dependency>
-            <groupId>org.nd4j</groupId>
-            <artifactId>nd4j-native-platform</artifactId>
-            <version>${dl4j.version}</version>
+            <groupId>org.datavec</groupId>
+            <artifactId>datavec-api</artifactId>
+            <version>${dl4j-master.version}</version>
         </dependency>
         <dependency>
             <groupId>org.deeplearning4j</groupId>
             <artifactId>deeplearning4j-core</artifactId>
-            <version>${dl4j.version}</version>
+            <version>${dl4j-master.version}</version>
         </dependency>
     </dependencies>
 
