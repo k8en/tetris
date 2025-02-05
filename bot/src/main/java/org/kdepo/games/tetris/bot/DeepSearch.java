@@ -4,8 +4,6 @@ import org.datavec.api.records.reader.RecordReader;
 import org.datavec.api.records.reader.impl.csv.CSVRecordReader;
 import org.datavec.api.split.FileSplit;
 import org.deeplearning4j.datasets.datavec.RecordReaderDataSetIterator;
-import org.deeplearning4j.eval.Evaluation;
-import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.BackpropType;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
@@ -13,6 +11,8 @@ import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
+import org.nd4j.common.io.ClassPathResource;
+import org.nd4j.evaluation.classification.Evaluation;
 import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
@@ -20,9 +20,10 @@ import org.nd4j.linalg.dataset.SplitTestAndTrain;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.dataset.api.preprocessor.DataNormalization;
 import org.nd4j.linalg.dataset.api.preprocessor.NormalizerStandardize;
-import org.nd4j.linalg.io.ClassPathResource;
+import org.nd4j.linalg.learning.config.Sgd;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -38,7 +39,7 @@ public class DeepSearch {
     private static final String GREEN = "\u001B[32m";
     private static final String YELLOW = "\u001B[33m";
 
-    private Evaluation train(
+    private DeepSearchResult train(
             String fileName,
             int inputNeurons,
             Activation inputActivation,
@@ -66,11 +67,11 @@ public class DeepSearch {
         DataSet testData = testAndTrain.getTest();
 
         MultiLayerConfiguration configuration = new NeuralNetConfiguration.Builder()
-                .iterations(1000)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .seed(6)
+                .activation(Activation.TANH)
                 .weightInit(WeightInit.XAVIER)
-                .regularization(true)
-                .learningRate(0.1).l2(0.0001)
+                .updater(new Sgd(0.1))
+                .l2(1e-4)
                 .list()
                 .layer(0,
                         new DenseLayer
@@ -97,7 +98,6 @@ public class DeepSearch {
                                 .build()
                 )
                 .backpropType(BackpropType.Standard)
-                .pretrain(false)
                 .build();
 
         MultiLayerNetwork model = new MultiLayerNetwork(configuration);
@@ -108,10 +108,11 @@ public class DeepSearch {
 
         Evaluation eval = new Evaluation(outputNeurons);
         eval.eval(testData.getLabels(), output);
-        return eval;
+
+        return new DeepSearchResult(eval, model);
     }
 
-    private Evaluation train(
+    private DeepSearchResult train(
             String fileName,
             int inputNeurons,
             Activation inputActivation,
@@ -141,11 +142,11 @@ public class DeepSearch {
         DataSet testData = testAndTrain.getTest();
 
         MultiLayerConfiguration configuration = new NeuralNetConfiguration.Builder()
-                .iterations(1000)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .seed(6)
+                .activation(Activation.TANH)
                 .weightInit(WeightInit.XAVIER)
-                .regularization(true)
-                .learningRate(0.1).l2(0.0001)
+                .updater(new Sgd(0.1))
+                .l2(1e-4)
                 .list()
                 .layer(0,
                         new DenseLayer
@@ -180,7 +181,6 @@ public class DeepSearch {
                                 .build()
                 )
                 .backpropType(BackpropType.Standard)
-                .pretrain(false)
                 .build();
 
         MultiLayerNetwork model = new MultiLayerNetwork(configuration);
@@ -191,10 +191,11 @@ public class DeepSearch {
 
         Evaluation eval = new Evaluation(outputNeurons);
         eval.eval(testData.getLabels(), output);
-        return eval;
+
+        return new DeepSearchResult(eval, model);
     }
 
-    private Evaluation train(
+    private DeepSearchResult train(
             String fileName,
             int inputNeurons,
             Activation inputActivation,
@@ -226,11 +227,11 @@ public class DeepSearch {
         DataSet testData = testAndTrain.getTest();
 
         MultiLayerConfiguration configuration = new NeuralNetConfiguration.Builder()
-                .iterations(1000)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+                .seed(6)
+                .activation(Activation.TANH)
                 .weightInit(WeightInit.XAVIER)
-                .regularization(true)
-                .learningRate(0.1).l2(0.0001)
+                .updater(new Sgd(0.1))
+                .l2(1e-4)
                 .list()
                 .layer(0,
                         new DenseLayer
@@ -273,7 +274,6 @@ public class DeepSearch {
                                 .build()
                 )
                 .backpropType(BackpropType.Standard)
-                .pretrain(false)
                 .build();
 
         MultiLayerNetwork model = new MultiLayerNetwork(configuration);
@@ -284,9 +284,114 @@ public class DeepSearch {
 
         Evaluation eval = new Evaluation(outputNeurons);
         eval.eval(testData.getLabels(), output);
-        return eval;
+
+        return new DeepSearchResult(eval, model);
     }
 
+    private DeepSearchResult train(
+            String fileName,
+            int inputNeurons,
+            Activation inputActivation,
+            int outputNeurons,
+            Activation outputActivation,
+            int layer1neurons,
+            Activation layer1Activation,
+            int layer2neurons,
+            Activation layer2Activation,
+            int layer3neurons,
+            Activation layer3Activation,
+            int layer4neurons,
+            Activation layer4Activation
+    ) throws IOException, InterruptedException {
+        DataSet allData;
+        try (RecordReader recordReader = new CSVRecordReader(0, ',')) {
+            recordReader.initialize(new FileSplit(new ClassPathResource(fileName).getFile()));
+
+            DataSetIterator iterator = new RecordReaderDataSetIterator(recordReader, 50, inputNeurons, outputNeurons);
+            allData = iterator.next();
+        }
+
+        allData.shuffle(42);
+
+        DataNormalization normalizer = new NormalizerStandardize();
+        normalizer.fit(allData);
+        normalizer.transform(allData);
+
+        SplitTestAndTrain testAndTrain = allData.splitTestAndTrain(0.65);
+        DataSet trainingData = testAndTrain.getTrain();
+        DataSet testData = testAndTrain.getTest();
+
+        MultiLayerConfiguration configuration = new NeuralNetConfiguration.Builder()
+                .seed(6)
+                .activation(Activation.TANH)
+                .weightInit(WeightInit.XAVIER)
+                .updater(new Sgd(0.1))
+                .l2(1e-4)
+                .list()
+                .layer(0,
+                        new DenseLayer
+                                .Builder()
+                                .activation(inputActivation)
+                                .nIn(inputNeurons)
+                                .nOut(layer1neurons)
+                                .build()
+                )
+                .layer(1,
+                        new DenseLayer
+                                .Builder()
+                                .activation(layer1Activation)
+                                .nIn(layer1neurons)
+                                .nOut(layer2neurons)
+                                .build()
+                )
+                .layer(2,
+                        new DenseLayer
+                                .Builder()
+                                .activation(layer2Activation)
+                                .nIn(layer2neurons)
+                                .nOut(layer3neurons)
+                                .build()
+                )
+                .layer(3,
+                        new DenseLayer
+                                .Builder()
+                                .activation(layer3Activation)
+                                .nIn(layer3neurons)
+                                .nOut(layer4neurons)
+                                .build()
+                )
+                .layer(4,
+                        new DenseLayer
+                                .Builder()
+                                .activation(layer4Activation)
+                                .nIn(layer4neurons)
+                                .nOut(outputNeurons)
+                                .build()
+                )
+                .layer(5,
+                        new OutputLayer
+                                .Builder(LossFunctions.LossFunction.MSE)
+                                .activation(outputActivation)
+                                .nIn(outputNeurons)
+                                .nOut(outputNeurons)
+                                .build()
+                )
+                .backpropType(BackpropType.Standard)
+                .build();
+
+        MultiLayerNetwork model = new MultiLayerNetwork(configuration);
+        model.init();
+        model.fit(trainingData);
+
+        INDArray output = model.output(testData.getFeatures());
+
+        Evaluation eval = new Evaluation(outputNeurons);
+        eval.eval(testData.getLabels(), output);
+
+        return new DeepSearchResult(eval, model);
+    }
+
+    // 1 hidden layer
     public void searchStructure(String fileName,
                                 int inputNeurons, List<Activation> activationInputList,
                                 int outputNeurons, List<Activation> activationOutputList,
@@ -296,9 +401,20 @@ public class DeepSearch {
         double bestAccuracy = 0;
         String bestConfiguration = null;
 
-        double totalIterations = activationInputList.size() * activationOutputList.size()
-                * (hiddenLayer1.getMaxNeurons() - hiddenLayer1.getMinNeurons()) * hiddenLayer1.getActivationList().size();
+        double totalIterations = 0;
+        for (Activation inputActivation : activationInputList) {
+            for (int layer1neurons = hiddenLayer1.getMinNeurons(); layer1neurons <= hiddenLayer1.getMaxNeurons(); layer1neurons++) {
+                for (Activation layer1Activation : hiddenLayer1.getActivationList()) {
+                    for (Activation outputActivation : activationOutputList) {
+                        totalIterations++;
+                    }
+                }
+            }
+        }
+
         double currentIteration = 0;
+        double onePercentIterations = totalIterations / 100;
+        double iterationNotification = onePercentIterations;
 
         System.out.println(YELLOW + "Start time: " + new Date() + RESET);
         System.out.println(YELLOW + "Iterations: " + totalIterations + RESET);
@@ -313,7 +429,7 @@ public class DeepSearch {
 
                         currentIteration = currentIteration + 1;
 
-                        Evaluation evaluation = train(
+                        DeepSearchResult deepSearchResult = train(
                                 fileName,
                                 inputNeurons,
                                 inputActivation,
@@ -323,20 +439,30 @@ public class DeepSearch {
                                 layer1Activation
                         );
 
+                        if (currentIteration >= iterationNotification) {
+                            System.out.println("Completed " + currentIteration + " of " + totalIterations);
+                            iterationNotification = iterationNotification + onePercentIterations;
+                        }
+
                         String currentConfiguration = DATE_FORMAT.format(new Date())
                                 + " [" + inputNeurons + "-" + inputActivation + "]"
                                 + " (" + layer1neurons + "-" + layer1Activation + ")"
                                 + " [" + outputNeurons + "-" + outputActivation + "]"
-                                + ": accuracy=" + evaluation.accuracy();
+                                + ": accuracy=" + deepSearchResult.getEvaluation().accuracy();
 
-                        if (evaluation.accuracy() > bestAccuracy) {
-                            bestAccuracy = evaluation.accuracy();
+                        if (deepSearchResult.getEvaluation().accuracy() > bestAccuracy) {
+                            bestAccuracy = deepSearchResult.getEvaluation().accuracy();
                             bestConfiguration = currentConfiguration;
 
-                            System.out.println(GREEN + evaluation.stats() + RESET);
-                        } else {
-                            double percent = (currentIteration * 100.0 / totalIterations);
-                            System.out.println(currentConfiguration + ", completed=" + String.format("%.2f%%", percent) + " (" + currentIteration + " of " + totalIterations + ")");
+                            String saveFileName = "C:\\Data\\tmp\\" + inputNeurons + inputActivation
+                                    + "_" + layer1neurons + layer1Activation
+                                    + "_" + outputNeurons + outputActivation;
+                            deepSearchResult.getModel().save(new File(saveFileName));
+
+                            System.out.println(YELLOW + bestConfiguration + RESET);
+                            System.out.println(YELLOW + "Saved at " + saveFileName + RESET);
+                            System.out.println(GREEN + deepSearchResult.getEvaluation().stats() + RESET);
+                            System.out.println();
                         }
                     }
                 }
@@ -347,6 +473,7 @@ public class DeepSearch {
         System.out.println(bestConfiguration);
     }
 
+    // 2 hidden layers
     public void searchStructure(String fileName,
                                 int inputNeurons, List<Activation> activationInputList,
                                 int outputNeurons, List<Activation> activationOutputList,
@@ -357,10 +484,24 @@ public class DeepSearch {
         double bestAccuracy = 0;
         String bestConfiguration = null;
 
-        double totalIterations = activationInputList.size() * activationOutputList.size()
-                * (hiddenLayer1.getMaxNeurons() - hiddenLayer1.getMinNeurons()) * hiddenLayer1.getActivationList().size()
-                * (hiddenLayer2.getMaxNeurons() - hiddenLayer2.getMinNeurons()) * hiddenLayer2.getActivationList().size();
+        double totalIterations = 0;
+        for (Activation inputActivation : activationInputList) {
+            for (int layer1neurons = hiddenLayer1.getMinNeurons(); layer1neurons <= hiddenLayer1.getMaxNeurons(); layer1neurons++) {
+                for (Activation layer1Activation : hiddenLayer1.getActivationList()) {
+                    for (int layer2neurons = hiddenLayer2.getMinNeurons(); layer2neurons <= hiddenLayer2.getMaxNeurons(); layer2neurons++) {
+                        for (Activation layer2Activation : hiddenLayer2.getActivationList()) {
+                            for (Activation outputActivation : activationOutputList) {
+                                totalIterations++;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         double currentIteration = 0;
+        double onePercentIterations = totalIterations / 100;
+        double iterationNotification = onePercentIterations;
 
         System.out.println(YELLOW + "Start time: " + new Date() + RESET);
         System.out.println(YELLOW + "Iterations: " + totalIterations + RESET);
@@ -378,7 +519,7 @@ public class DeepSearch {
 
                                 currentIteration = currentIteration + 1;
 
-                                Evaluation evaluation = train(
+                                DeepSearchResult deepSearchResult = train(
                                         fileName,
                                         inputNeurons,
                                         inputActivation,
@@ -390,27 +531,36 @@ public class DeepSearch {
                                         layer2Activation
                                 );
 
+                                if (currentIteration >= iterationNotification) {
+                                    System.out.println("Completed " + currentIteration + " of " + totalIterations);
+                                    iterationNotification = iterationNotification + onePercentIterations;
+                                }
+
                                 String currentConfiguration = DATE_FORMAT.format(new Date())
                                         + " [" + inputNeurons + "-" + inputActivation + "]"
                                         + " (" + layer1neurons + "-" + layer1Activation + ")"
                                         + " (" + layer2neurons + "-" + layer2Activation + ")"
                                         + " [" + outputNeurons + "-" + outputActivation + "]"
-                                        + ": accuracy=" + evaluation.accuracy();
+                                        + ": accuracy=" + deepSearchResult.getEvaluation().accuracy();
 
-                                if (evaluation.accuracy() > bestAccuracy) {
-                                    bestAccuracy = evaluation.accuracy();
+                                if (deepSearchResult.getEvaluation().accuracy() > bestAccuracy) {
+                                    bestAccuracy = deepSearchResult.getEvaluation().accuracy();
                                     bestConfiguration = currentConfiguration;
 
-                                    System.out.println(GREEN + evaluation.stats() + RESET);
-                                } else {
-                                    double percent = (currentIteration * 100.0 / totalIterations);
-                                    System.out.println(currentConfiguration + ", completed=" + String.format("%.2f%%", percent) + " (" + currentIteration + " of " + totalIterations + ")");
+                                    String saveFileName = "C:\\Data\\tmp\\" + inputNeurons + inputActivation
+                                            + "_" + layer1neurons + layer1Activation
+                                            + "_" + layer2neurons + layer2Activation
+                                            + "_" + outputNeurons + outputActivation;
+                                    deepSearchResult.getModel().save(new File(saveFileName));
+
+                                    System.out.println(YELLOW + bestConfiguration + RESET);
+                                    System.out.println(YELLOW + "Saved at " + saveFileName + RESET);
+                                    System.out.println(GREEN + deepSearchResult.getEvaluation().stats() + RESET);
+                                    System.out.println();
                                 }
                             }
-
                         }
                     }
-
                 }
             }
         }
@@ -419,6 +569,7 @@ public class DeepSearch {
         System.out.println(bestConfiguration);
     }
 
+    // 3 hidden layers
     public void searchStructure(String fileName,
                                 int inputNeurons, List<Activation> activationInputList,
                                 int outputNeurons, List<Activation> activationOutputList,
@@ -430,11 +581,28 @@ public class DeepSearch {
         double bestAccuracy = 0;
         String bestConfiguration = null;
 
-        double totalIterations = activationInputList.size() * activationOutputList.size()
-                * (hiddenLayer1.getMaxNeurons() - hiddenLayer1.getMinNeurons()) * hiddenLayer1.getActivationList().size()
-                * (hiddenLayer2.getMaxNeurons() - hiddenLayer2.getMinNeurons()) * hiddenLayer2.getActivationList().size()
-                * (hiddenLayer3.getMaxNeurons() - hiddenLayer3.getMinNeurons()) * hiddenLayer3.getActivationList().size();
+        double totalIterations = 0;
+        for (Activation inputActivation : activationInputList) {
+            for (int layer1neurons = hiddenLayer1.getMinNeurons(); layer1neurons <= hiddenLayer1.getMaxNeurons(); layer1neurons++) {
+                for (Activation layer1Activation : hiddenLayer1.getActivationList()) {
+                    for (int layer2neurons = hiddenLayer2.getMinNeurons(); layer2neurons <= hiddenLayer2.getMaxNeurons(); layer2neurons++) {
+                        for (Activation layer2Activation : hiddenLayer2.getActivationList()) {
+                            for (int layer3neurons = hiddenLayer3.getMinNeurons(); layer3neurons <= hiddenLayer3.getMaxNeurons(); layer3neurons++) {
+                                for (Activation layer3Activation : hiddenLayer3.getActivationList()) {
+                                    for (Activation outputActivation : activationOutputList) {
+                                        totalIterations++;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         double currentIteration = 0;
+        double onePercentIterations = totalIterations / 100;
+        double iterationNotification = onePercentIterations;
 
         System.out.println(YELLOW + "Start time: " + new Date() + RESET);
         System.out.println(YELLOW + "Iterations: " + totalIterations + RESET);
@@ -455,7 +623,7 @@ public class DeepSearch {
 
                                         currentIteration = currentIteration + 1;
 
-                                        Evaluation evaluation = train(
+                                        DeepSearchResult deepSearchResult = train(
                                                 fileName,
                                                 inputNeurons,
                                                 inputActivation,
@@ -469,30 +637,164 @@ public class DeepSearch {
                                                 layer3Activation
                                         );
 
+                                        if (currentIteration >= iterationNotification) {
+                                            System.out.println("Completed " + currentIteration + " of " + totalIterations);
+                                            iterationNotification = iterationNotification + onePercentIterations;
+                                        }
+
                                         String currentConfiguration = DATE_FORMAT.format(new Date())
                                                 + " [" + inputNeurons + "-" + inputActivation + "]"
                                                 + " (" + layer1neurons + "-" + layer1Activation + ")"
                                                 + " (" + layer2neurons + "-" + layer2Activation + ")"
                                                 + " (" + layer3neurons + "-" + layer3Activation + ")"
                                                 + " [" + outputNeurons + "-" + outputActivation + "]"
-                                                + ": accuracy=" + evaluation.accuracy();
+                                                + ": accuracy=" + deepSearchResult.getEvaluation().accuracy();
 
-                                        if (evaluation.accuracy() > bestAccuracy) {
-                                            bestAccuracy = evaluation.accuracy();
+                                        if (deepSearchResult.getEvaluation().accuracy() > bestAccuracy) {
+                                            bestAccuracy = deepSearchResult.getEvaluation().accuracy();
                                             bestConfiguration = currentConfiguration;
 
-                                            System.out.println(GREEN + evaluation.stats() + RESET);
-                                        } else {
-                                            double percent = (currentIteration * 100.0 / totalIterations);
-                                            System.out.println(currentConfiguration + ", completed=" + String.format("%.2f%%", percent) + " (" + currentIteration + " of " + totalIterations + ")");
+                                            String saveFileName = "C:\\Data\\tmp\\" + inputNeurons + inputActivation
+                                                    + "_" + layer1neurons + layer1Activation
+                                                    + "_" + layer2neurons + layer2Activation
+                                                    + "_" + layer3neurons + layer3Activation
+                                                    + "_" + outputNeurons + outputActivation;
+                                            deepSearchResult.getModel().save(new File(saveFileName));
+
+                                            System.out.println(YELLOW + bestConfiguration + RESET);
+                                            System.out.println(YELLOW + "Saved at " + saveFileName + RESET);
+                                            System.out.println(GREEN + deepSearchResult.getEvaluation().stats() + RESET);
+                                            System.out.println();
                                         }
                                     }
                                 }
                             }
-
                         }
                     }
+                }
+            }
+        }
 
+        System.out.println("End time: " + new Date());
+        System.out.println(bestConfiguration);
+    }
+
+    // 4 hidden layers
+    public void searchStructure(String fileName,
+                                int inputNeurons, List<Activation> activationInputList,
+                                int outputNeurons, List<Activation> activationOutputList,
+                                LayerSettings hiddenLayer1,
+                                LayerSettings hiddenLayer2,
+                                LayerSettings hiddenLayer3,
+                                LayerSettings hiddenLayer4
+    ) throws IOException, InterruptedException {
+
+        double bestAccuracy = 0;
+        String bestConfiguration = null;
+
+        double totalIterations = 0;
+        for (Activation inputActivation : activationInputList) {
+            for (int layer1neurons = hiddenLayer1.getMinNeurons(); layer1neurons <= hiddenLayer1.getMaxNeurons(); layer1neurons++) {
+                for (Activation layer1Activation : hiddenLayer1.getActivationList()) {
+                    for (int layer2neurons = hiddenLayer2.getMinNeurons(); layer2neurons <= hiddenLayer2.getMaxNeurons(); layer2neurons++) {
+                        for (Activation layer2Activation : hiddenLayer2.getActivationList()) {
+                            for (int layer3neurons = hiddenLayer3.getMinNeurons(); layer3neurons <= hiddenLayer3.getMaxNeurons(); layer3neurons++) {
+                                for (Activation layer3Activation : hiddenLayer3.getActivationList()) {
+                                    for (int layer4neurons = hiddenLayer4.getMinNeurons(); layer4neurons <= hiddenLayer4.getMaxNeurons(); layer4neurons++) {
+                                        for (Activation layer4Activation : hiddenLayer4.getActivationList()) {
+                                            for (Activation outputActivation : activationOutputList) {
+                                                totalIterations++;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        double currentIteration = 0;
+        double onePercentIterations = totalIterations / 100;
+        double iterationNotification = onePercentIterations;
+
+        System.out.println(YELLOW + "Start time: " + new Date() + RESET);
+        System.out.println(YELLOW + "Iterations: " + totalIterations + RESET);
+
+        for (Activation inputActivation : activationInputList) {
+
+            // Hidden layers section
+            for (int layer1neurons = hiddenLayer1.getMinNeurons(); layer1neurons <= hiddenLayer1.getMaxNeurons(); layer1neurons++) {
+                for (Activation layer1Activation : hiddenLayer1.getActivationList()) {
+
+                    for (int layer2neurons = hiddenLayer2.getMinNeurons(); layer2neurons <= hiddenLayer2.getMaxNeurons(); layer2neurons++) {
+                        for (Activation layer2Activation : hiddenLayer2.getActivationList()) {
+
+                            for (int layer3neurons = hiddenLayer3.getMinNeurons(); layer3neurons <= hiddenLayer3.getMaxNeurons(); layer3neurons++) {
+                                for (Activation layer3Activation : hiddenLayer3.getActivationList()) {
+
+                                    for (int layer4neurons = hiddenLayer4.getMinNeurons(); layer4neurons <= hiddenLayer4.getMaxNeurons(); layer4neurons++) {
+                                        for (Activation layer4Activation : hiddenLayer4.getActivationList()) {
+
+                                            for (Activation outputActivation : activationOutputList) {
+
+                                                currentIteration = currentIteration + 1;
+
+                                                DeepSearchResult deepSearchResult = train(
+                                                        fileName,
+                                                        inputNeurons,
+                                                        inputActivation,
+                                                        outputNeurons,
+                                                        outputActivation,
+                                                        layer1neurons,
+                                                        layer1Activation,
+                                                        layer2neurons,
+                                                        layer2Activation,
+                                                        layer3neurons,
+                                                        layer3Activation,
+                                                        layer4neurons,
+                                                        layer4Activation
+                                                );
+
+                                                if (currentIteration >= iterationNotification) {
+                                                    System.out.println("Completed " + currentIteration + " of " + totalIterations);
+                                                    iterationNotification = iterationNotification + onePercentIterations;
+                                                }
+
+                                                String currentConfiguration = DATE_FORMAT.format(new Date())
+                                                        + " [" + inputNeurons + "-" + inputActivation + "]"
+                                                        + " (" + layer1neurons + "-" + layer1Activation + ")"
+                                                        + " (" + layer2neurons + "-" + layer2Activation + ")"
+                                                        + " (" + layer3neurons + "-" + layer3Activation + ")"
+                                                        + " (" + layer4neurons + "-" + layer4Activation + ")"
+                                                        + " [" + outputNeurons + "-" + outputActivation + "]"
+                                                        + ": accuracy=" + deepSearchResult.getEvaluation().accuracy();
+
+                                                if (deepSearchResult.getEvaluation().accuracy() > bestAccuracy) {
+                                                    bestAccuracy = deepSearchResult.getEvaluation().accuracy();
+                                                    bestConfiguration = currentConfiguration;
+
+                                                    String saveFileName = "C:\\Data\\tmp\\" + inputNeurons + inputActivation
+                                                            + "_" + layer1neurons + layer1Activation
+                                                            + "_" + layer2neurons + layer2Activation
+                                                            + "_" + layer3neurons + layer3Activation
+                                                            + "_" + layer4neurons + layer4Activation
+                                                            + "_" + outputNeurons + outputActivation;
+                                                    deepSearchResult.getModel().save(new File(saveFileName));
+
+                                                    System.out.println(YELLOW + bestConfiguration + RESET);
+                                                    System.out.println(YELLOW + "Saved at " + saveFileName + RESET);
+                                                    System.out.println(GREEN + deepSearchResult.getEvaluation().stats() + RESET);
+                                                    System.out.println();
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

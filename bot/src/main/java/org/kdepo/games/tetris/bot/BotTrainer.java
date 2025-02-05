@@ -17,15 +17,15 @@ public class BotTrainer {
 
         List<Activation> activationInputList = new ArrayList<>();
         activationInputList.add(Activation.RELU);
-//        activationInputList.add(Activation.SIGMOID);
-//        activationInputList.add(Activation.SOFTMAX);
-//        activationInputList.add(Activation.TANH);
+        activationInputList.add(Activation.SIGMOID);
+        activationInputList.add(Activation.SOFTMAX);
+        activationInputList.add(Activation.TANH);
 
         List<Activation> activationOutputList = new ArrayList<>();
-//        activationOutputList.add(Activation.RELU);
+        activationOutputList.add(Activation.RELU);
         activationOutputList.add(Activation.SIGMOID);
         activationOutputList.add(Activation.SOFTMAX);
-//        activationOutputList.add(Activation.TANH);
+        activationOutputList.add(Activation.TANH);
 
         // Hidden 1
         List<Activation> activation1List = new ArrayList<>();
@@ -63,6 +63,18 @@ public class BotTrainer {
         hiddenLayer3.setMaxNeurons(12);
         hiddenLayer3.setActivationList(activation3List);
 
+        // Hidden 4
+        List<Activation> activation4List = new ArrayList<>();
+        activation4List.add(Activation.RELU);
+        activation4List.add(Activation.SIGMOID);
+        activation4List.add(Activation.SOFTMAX);
+        activation4List.add(Activation.TANH);
+
+        LayerSettings hiddenLayer4 = new LayerSettings();
+        hiddenLayer4.setMinNeurons(4);
+        hiddenLayer4.setMaxNeurons(12);
+        hiddenLayer4.setActivationList(activation4List);
+
         deepSearch.searchStructure(
                 fileName,
                 inputNeurons,
@@ -72,6 +84,7 @@ public class BotTrainer {
                 hiddenLayer1
                 , hiddenLayer2
 //                , hiddenLayer3
+//                , hiddenLayer4
         );
     }
 
