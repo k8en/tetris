@@ -8,11 +8,23 @@ public class Constants {
 
     public static final int BLOCK_SIZE = 32;
 
-    public static final int SCREEN_WIDTH = 1280;
-    public static final int SCREEN_HEIGHT = 960;
+    public static final int SCREEN_WIDTH = 980;
+    public static final int SCREEN_HEIGHT = 680;
+
+    public interface Players {
+        int NO_PLAYER = 0;
+        int HUMAN = 1;
+        int TEST_BOT = 2;
+    }
+
+    public interface ScreenParameters {
+        String LEFT_PLAYER = "left_player";
+        String RIGHT_PLAYER = "right_player";
+    }
 
     public interface Screens {
         String GAME = "game";
+        String TITLE = "title";
     }
 
     private Constants() {

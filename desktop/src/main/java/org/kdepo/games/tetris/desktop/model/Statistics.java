@@ -45,6 +45,10 @@ public class Statistics {
         return score;
     }
 
+    public int getFigures() {
+        return figuresType1 + figuresType2 + figuresType3 + figuresType4 + figuresType5 + figuresType6;
+    }
+
     public void addFiguresType1(int figuresType1) {
         this.figuresType1 = this.figuresType1 + figuresType1;
     }

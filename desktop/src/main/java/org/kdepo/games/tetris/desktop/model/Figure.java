@@ -35,4 +35,17 @@ public class Figure {
     public void setData(int[][] data) {
         this.data = data;
     }
+
+    public Figure cloneFigure() {
+        int clonedFigureId = figureId;
+        int clonedOrientationId = orientationId;
+        int[][] clonedData = new int[data.length][data[0].length];
+        for (int row = 0; row < data.length; row++) {
+            for (int column = 0; column < data[row].length; column++) {
+                clonedData[row][column] = data[row][column];
+            }
+        }
+
+        return new Figure(clonedFigureId, clonedOrientationId, clonedData);
+    }
 }

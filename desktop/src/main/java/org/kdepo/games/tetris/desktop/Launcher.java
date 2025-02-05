@@ -1,6 +1,7 @@
 package org.kdepo.games.tetris.desktop;
 
 import org.kdepo.games.tetris.desktop.screens.GameScreen;
+import org.kdepo.games.tetris.desktop.screens.TitleScreen;
 import org.kdepo.graphics.k2d.GameEngine;
 import org.kdepo.graphics.k2d.GamePanel;
 
@@ -15,13 +16,15 @@ public class Launcher {
         gameEngine.setScreenWidth(Constants.SCREEN_WIDTH);
         gameEngine.setScreenHeight(Constants.SCREEN_HEIGHT);
 
+        TitleScreen titleScreen = new TitleScreen();
         GameScreen gameScreen = new GameScreen();
 
+        gameEngine.addScreen(titleScreen);
         gameEngine.addScreen(gameScreen);
 
         // Parameters map to share between screens
         Map<String, Object> parameters = new HashMap<>();
-        gameEngine.setActiveScreen(gameScreen.getName(), parameters);
+        gameEngine.setActiveScreen(titleScreen.getName(), parameters);
 
         GamePanel gamePanel = new GamePanel(gameEngine.getScreenWidth(), gameEngine.getScreenHeight());
         gamePanel.setGameEngine(gameEngine);

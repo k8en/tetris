@@ -1,5 +1,8 @@
 package org.kdepo.games.tetris.desktop.screens;
 
+import org.kdepo.games.tetris.bot.AbstractBot;
+import org.kdepo.games.tetris.bot.TestBot;
+import org.kdepo.games.tetris.bot.model.BotAction;
 import org.kdepo.games.tetris.desktop.Constants;
 import org.kdepo.games.tetris.desktop.model.Field;
 import org.kdepo.games.tetris.desktop.model.Figure;
@@ -13,40 +16,75 @@ import org.kdepo.graphics.k2d.MouseHandler;
 import org.kdepo.graphics.k2d.screens.AbstractScreen;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class GameScreen extends AbstractScreen {
 
-    private Figure nextFigure;
-    private Figure currentFigure;
+    private Map<String, Object> parameters;
 
-    private int currentFigureFieldCellX;
-    private int currentFigureFieldCellY;
+    private List<Figure> figuresToPlay;
 
-    private final int fieldScreenPositionX;
-    private final int fieldScreenPositionY;
-    private Field field;
+    private int leftNextFigureIndex;
+    private Figure leftNextFigure;
+    private Figure leftCurrentFigure;
 
-    private final int fieldPreviewScreenPositionX;
-    private final int fieldPreviewScreenPositionY;
-    private FigurePreview figurePreview;
+    private int rightNextFigureIndex;
+    private Figure rightNextFigure;
+    private Figure rightCurrentFigure;
+
+    private int leftCurrentFigureFieldCellX;
+    private int leftCurrentFigureFieldCellY;
+
+    private int rightCurrentFigureFieldCellX;
+    private int rightCurrentFigureFieldCellY;
+
+    private final int leftFieldScreenPositionX;
+    private final int leftFieldScreenPositionY;
+    private Field leftField;
+
+    private final int rightFieldScreenPositionX;
+    private final int rightFieldScreenPositionY;
+    private Field rightField;
+
+    private final int leftFieldPreviewScreenPositionX;
+    private final int leftFieldPreviewScreenPositionY;
+    private FigurePreview leftFigurePreview;
+
+    private final int rightFieldPreviewScreenPositionX;
+    private final int rightFieldPreviewScreenPositionY;
+    private FigurePreview rightFigurePreview;
 
     private long nextStepTimer;
     private final int nextStepDelay;
 
-    private Statistics statistics;
+    private Statistics leftStatistics;
+    private Statistics rightStatistics;
 
-    private long controlsTimer;
+    private long leftControlsTimer;
+    private long rightControlsTimer;
+
+    private AbstractBot botAtLeft;
+    private AbstractBot botAtRight;
+
+    private boolean isLeftGameOver;
+    private boolean isRightGameOver;
 
     public GameScreen() {
         this.name = Constants.Screens.GAME;
 
-        fieldScreenPositionX = 10;
-        fieldScreenPositionY = 10;
+        leftFieldScreenPositionX = 20;
+        leftFieldScreenPositionY = 20;
 
-        fieldPreviewScreenPositionX = 350;
-        fieldPreviewScreenPositionY = 10;
+        leftFieldPreviewScreenPositionX = leftFieldScreenPositionX + 320 + 10;
+        leftFieldPreviewScreenPositionY = leftFieldScreenPositionY;
+
+        rightFieldScreenPositionX = leftFieldScreenPositionX + 320 + 10 + 130 + 20;
+        rightFieldScreenPositionY = leftFieldScreenPositionY;
+
+        rightFieldPreviewScreenPositionX = rightFieldScreenPositionX + 320 + 10;
+        rightFieldPreviewScreenPositionY = leftFieldScreenPositionY;
 
         nextStepDelay = 1000;
         nextStepTimer = System.currentTimeMillis() + nextStepDelay;
@@ -54,113 +92,325 @@ public class GameScreen extends AbstractScreen {
 
     @Override
     public void initialize(Map<String, Object> parameters) {
-        field = new Field();
-        field.setScreenPositionX(fieldScreenPositionX);
-        field.setScreenPositionY(fieldScreenPositionY);
+        this.parameters = parameters;
 
-        figurePreview = new FigurePreview(fieldPreviewScreenPositionX, fieldPreviewScreenPositionY, 4, 4);
+        // Resolve players
+        Integer leftPlayerId = (Integer) parameters.get(Constants.ScreenParameters.LEFT_PLAYER);
+        botAtLeft = resolvePlayer(leftPlayerId);
 
-        nextFigure = FigureUtils.getNextFigure();
-        currentFigure = FigureUtils.getNextFigure();
+        Integer rightPlayerId = (Integer) parameters.get(Constants.ScreenParameters.RIGHT_PLAYER);
+        botAtRight = resolvePlayer(rightPlayerId);
 
-        currentFigureFieldCellX = 3;
-        currentFigureFieldCellY = 0;
+        // Prepare game fields
+        leftField = new Field();
+        leftField.setScreenPositionX(leftFieldScreenPositionX);
+        leftField.setScreenPositionY(leftFieldScreenPositionY);
 
-        statistics = new Statistics();
+        rightField = new Field();
+        rightField.setScreenPositionX(rightFieldScreenPositionX);
+        rightField.setScreenPositionY(rightFieldScreenPositionY);
 
-        controlsTimer = System.currentTimeMillis();
+        // Prepare figures preview
+        leftFigurePreview = new FigurePreview(leftFieldPreviewScreenPositionX, leftFieldPreviewScreenPositionY, 4, 4);
+        rightFigurePreview = new FigurePreview(rightFieldPreviewScreenPositionX, rightFieldPreviewScreenPositionY, 4, 4);
+
+        // Prepare figures generator and selection
+        figuresToPlay = new ArrayList<>();
+
+        leftNextFigureIndex = 0;
+        leftNextFigure = getFigureToPlay(leftNextFigureIndex);
+        leftNextFigureIndex++;
+        leftCurrentFigure = getFigureToPlay(leftNextFigureIndex);
+        leftNextFigureIndex++;
+
+        rightNextFigureIndex = 0;
+        rightNextFigure = getFigureToPlay(rightNextFigureIndex);
+        rightNextFigureIndex++;
+        rightCurrentFigure = getFigureToPlay(rightNextFigureIndex);
+        rightNextFigureIndex++;
+
+        // Prepare figure start positions
+        leftCurrentFigureFieldCellX = 3;
+        leftCurrentFigureFieldCellY = 0;
+
+        rightCurrentFigureFieldCellX = leftCurrentFigureFieldCellX;
+        rightCurrentFigureFieldCellY = leftCurrentFigureFieldCellY;
+
+        // Prepare statistics
+        leftStatistics = new Statistics();
+        rightStatistics = new Statistics();
+
+        // Delay for controls
+        leftControlsTimer = System.currentTimeMillis();
+        rightControlsTimer = System.currentTimeMillis();
+
+        if (botAtLeft != null) {
+            botAtLeft.think(
+                    leftField.getData(),
+                    leftCurrentFigure.getFigureId(),
+                    leftCurrentFigure.getOrientationId(),
+                    leftCurrentFigureFieldCellX,
+                    leftNextFigure.getFigureId(),
+                    leftNextFigure.getOrientationId()
+            );
+        }
+        if (botAtRight != null) {
+            botAtRight.think(
+                    rightField.getData(),
+                    rightCurrentFigure.getFigureId(),
+                    rightCurrentFigure.getOrientationId(),
+                    rightCurrentFigureFieldCellX,
+                    rightNextFigure.getFigureId(),
+                    rightNextFigure.getOrientationId()
+            );
+        }
+
+        isLeftGameOver = false;
+        isRightGameOver = false;
     }
 
     @Override
     public void update(KeyHandler keyHandler, MouseHandler mouseHandler) {
+        // It is time to move figure for one step down
         if (System.currentTimeMillis() >= nextStepTimer) {
+            // Update timer for figure drop
             nextStepTimer = System.currentTimeMillis() + nextStepDelay;
 
-            if (FieldUtils.canMoveDown(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
-                currentFigureFieldCellY = currentFigureFieldCellY + 1;
-
-            } else {
-                DataCollectionUtils.collect(field.getData(), currentFigure, currentFigureFieldCellX, nextFigure);
-
-                FieldUtils.mergeData(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY);
-
-                // Collect figure statistics
-                if (currentFigure.getFigureId() == 1) {
-                    statistics.addFiguresType1(1);
-                } else if (currentFigure.getFigureId() == 2) {
-                    statistics.addFiguresType2(1);
-                } else if (currentFigure.getFigureId() == 3) {
-                    statistics.addFiguresType3(1);
-                } else if (currentFigure.getFigureId() == 4) {
-                    statistics.addFiguresType4(1);
-                } else if (currentFigure.getFigureId() == 5) {
-                    statistics.addFiguresType5(1);
-                } else if (currentFigure.getFigureId() == 6) {
-                    statistics.addFiguresType6(1);
-                }
-
-                List<Integer> completedLinesIndexes = FieldUtils.getCompletedLinesIndexes(field.getData());
-                if (!completedLinesIndexes.isEmpty()) {
-                    updateStatistics(completedLinesIndexes.size());
-                    FieldUtils.removeLines(field.getData(), completedLinesIndexes);
-
-                    if (statistics.getLines() >= 100) {
-                        System.out.println("Score: " + statistics.getScore());
-                        System.out.println("Lines: " + statistics.getLines());
-                        DataCollectionUtils.printCollectedData();
-                    }
-                }
-
-                if (FieldUtils.isFieldOverflow(field.getData())) {
-                    System.out.println("Game Over");
+            // Left side figure drop down
+            if (!isLeftGameOver) {
+                if (FieldUtils.canMoveDown(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                    leftCurrentFigureFieldCellY = leftCurrentFigureFieldCellY + 1;
 
                 } else {
-                    //System.out.println("New figure generated");
-                    currentFigure = nextFigure;
-                    nextFigure = FigureUtils.getNextFigure();
+                    // Collect this type of statistics for human play only
+                    if (botAtLeft == null) {
+                        DataCollectionUtils.collect(leftField.getData(), leftCurrentFigure, leftCurrentFigureFieldCellX, leftNextFigure);
+                    }
 
-                    currentFigureFieldCellX = 3;
-                    currentFigureFieldCellY = 0;
+                    FieldUtils.mergeData(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY);
+
+                    updateStatisticsFigures(leftStatistics, leftCurrentFigure);
+
+                    List<Integer> completedLinesIndexes = FieldUtils.getCompletedLinesIndexes(leftField.getData());
+                    if (!completedLinesIndexes.isEmpty()) {
+                        updateStatisticsScore(leftStatistics, completedLinesIndexes.size());
+                        FieldUtils.removeLines(leftField.getData(), completedLinesIndexes);
+
+                        // Print this type of statistics for human play only
+                        if (botAtLeft == null && leftStatistics.getLines() >= 100) {
+                            System.out.println("Score: " + leftStatistics.getScore());
+                            System.out.println("Lines: " + leftStatistics.getLines());
+                            DataCollectionUtils.printCollectedData();
+                        }
+                    }
+
+                    if (FieldUtils.isFieldOverflow(leftField.getData())) {
+                        System.out.println("Game Over (Left)");
+                        isLeftGameOver = true;
+
+                    } else {
+                        leftCurrentFigure = leftNextFigure;
+
+                        leftNextFigure = getFigureToPlay(leftNextFigureIndex);
+                        leftNextFigureIndex++;
+
+                        leftCurrentFigureFieldCellX = 3;
+                        leftCurrentFigureFieldCellY = 0;
+
+                        if (botAtLeft != null) {
+                            botAtLeft.think(
+                                    leftField.getData(),
+                                    leftCurrentFigure.getFigureId(),
+                                    leftCurrentFigure.getOrientationId(),
+                                    leftCurrentFigureFieldCellX,
+                                    leftNextFigure.getFigureId(),
+                                    leftNextFigure.getOrientationId()
+                            );
+                        }
+                    }
                 }
             }
 
-        } else if (keyHandler.isRightPressed() && isControlsReady()) {
-            if (FieldUtils.canMoveRight(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
-                currentFigureFieldCellX = currentFigureFieldCellX + 1;
-            }
-            resetControlsTimer();
+            // Right side figure drop down
+            if (!isRightGameOver) {
+                if (FieldUtils.canMoveDown(rightField.getData(), rightCurrentFigure.getData(), rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY)) {
+                    rightCurrentFigureFieldCellY = rightCurrentFigureFieldCellY + 1;
 
-        } else if (keyHandler.isLeftPressed() && isControlsReady()) {
-            if (FieldUtils.canMoveLeft(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
-                currentFigureFieldCellX = currentFigureFieldCellX - 1;
-            }
-            resetControlsTimer();
+                } else {
+                    FieldUtils.mergeData(rightField.getData(), rightCurrentFigure.getData(), rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY);
 
-        } else if (keyHandler.isDownPressed()) {
-            if (FieldUtils.canMoveDown(field.getData(), currentFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
-                currentFigureFieldCellY = currentFigureFieldCellY + 1;
+                    updateStatisticsFigures(rightStatistics, rightCurrentFigure);
+
+                    List<Integer> completedLinesIndexes = FieldUtils.getCompletedLinesIndexes(rightField.getData());
+                    if (!completedLinesIndexes.isEmpty()) {
+                        updateStatisticsScore(rightStatistics, completedLinesIndexes.size());
+                        FieldUtils.removeLines(rightField.getData(), completedLinesIndexes);
+                    }
+
+                    if (FieldUtils.isFieldOverflow(rightField.getData())) {
+                        System.out.println("Game Over (Right)");
+                        isRightGameOver = true;
+
+                    } else {
+                        rightCurrentFigure = rightNextFigure;
+
+                        rightNextFigure = getFigureToPlay(rightNextFigureIndex);
+                        rightNextFigureIndex++;
+
+                        rightCurrentFigureFieldCellX = 3;
+                        rightCurrentFigureFieldCellY = 0;
+
+                        if (botAtRight != null) {
+                            botAtRight.think(
+                                    rightField.getData(),
+                                    rightCurrentFigure.getFigureId(),
+                                    rightCurrentFigure.getOrientationId(),
+                                    rightCurrentFigureFieldCellX,
+                                    rightNextFigure.getFigureId(),
+                                    rightNextFigure.getOrientationId()
+                            );
+                        }
+                    }
+                }
             }
-            resetControlsTimer();
-        } else if (keyHandler.isSpacePressed() && isControlsReady()) {
-            Figure rotatedFigure = FigureUtils.getRotatedFigure(currentFigure);
-            if (FieldUtils.canPlaceFigure(field.getData(), rotatedFigure.getData(), currentFigureFieldCellX, currentFigureFieldCellY)) {
-                currentFigure.setOrientationId(rotatedFigure.getOrientationId());
-                currentFigure.setData(rotatedFigure.getData());
+
+        } else {
+
+            if (botAtLeft == null && !isLeftGameOver) {
+                // Apply controls from human
+                if (keyHandler.isRightPressed() && isLeftControlsReady()) {
+                    if (FieldUtils.canMoveRight(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                        leftCurrentFigureFieldCellX = leftCurrentFigureFieldCellX + 1;
+                    }
+                    resetLeftControlsTimer();
+
+                } else if (keyHandler.isLeftPressed() && isLeftControlsReady()) {
+                    if (FieldUtils.canMoveLeft(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                        leftCurrentFigureFieldCellX = leftCurrentFigureFieldCellX - 1;
+                    }
+                    resetLeftControlsTimer();
+
+                } else if (keyHandler.isDownPressed()) {
+                    if (FieldUtils.canMoveDown(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                        leftCurrentFigureFieldCellY = leftCurrentFigureFieldCellY + 1;
+                    }
+                    resetLeftControlsTimer();
+                } else if (keyHandler.isSpacePressed() && isLeftControlsReady()) {
+                    Figure rotatedFigure = FigureUtils.getRotatedFigure(leftCurrentFigure);
+                    if (FieldUtils.canPlaceFigure(leftField.getData(), rotatedFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                        leftCurrentFigure.setOrientationId(rotatedFigure.getOrientationId());
+                        leftCurrentFigure.setData(rotatedFigure.getData());
+                    }
+                    resetLeftControlsTimer();
+                }
+            } else {
+                // Apply controls from bot
+                if (isLeftControlsReady() && !isLeftGameOver) {
+                    BotAction botAction = botAtLeft.getNextAction();
+                    if (BotAction.MOVE_LEFT.equals(botAction)) {
+                        if (FieldUtils.canMoveLeft(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                            leftCurrentFigureFieldCellX = leftCurrentFigureFieldCellX - 1;
+                        } else {
+                            System.out.println("BotAtLeft: Failed to move left");
+                        }
+
+                    } else if (BotAction.MOVE_RIGHT.equals(botAction)) {
+                        if (FieldUtils.canMoveRight(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                            leftCurrentFigureFieldCellX = leftCurrentFigureFieldCellX + 1;
+                        } else {
+                            System.out.println("BotAtLeft: Failed to move right");
+                        }
+
+                    } else if (BotAction.ROTATE_CLOCKWISE.equals(botAction)) {
+                        Figure rotatedFigure = FigureUtils.getRotatedFigure(leftCurrentFigure);
+                        if (FieldUtils.canPlaceFigure(leftField.getData(), rotatedFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                            leftCurrentFigure.setOrientationId(rotatedFigure.getOrientationId());
+                            leftCurrentFigure.setData(rotatedFigure.getData());
+                        } else {
+                            System.out.println("BotAtLeft: Failed to rotate");
+                        }
+
+                    } else {
+                        // No actions - lets drop down
+                        if (FieldUtils.canMoveDown(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
+                            leftCurrentFigureFieldCellY = leftCurrentFigureFieldCellY + 1;
+                        }
+                    }
+
+                    resetLeftControlsTimer();
+                }
             }
-            resetControlsTimer();
+
+            if (botAtRight != null && !isRightGameOver) {
+                // Apply controls from bot
+                if (isRightControlsReady()) {
+                    BotAction botAction = botAtRight.getNextAction();
+                    if (BotAction.MOVE_LEFT.equals(botAction)) {
+                        if (FieldUtils.canMoveLeft(rightField.getData(), rightCurrentFigure.getData(), rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY)) {
+                            rightCurrentFigureFieldCellX = rightCurrentFigureFieldCellX - 1;
+                        } else {
+                            System.out.println("BotAtRight: Failed to move left");
+                        }
+
+                    } else if (BotAction.MOVE_RIGHT.equals(botAction)) {
+                        if (FieldUtils.canMoveRight(rightField.getData(), rightCurrentFigure.getData(), rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY)) {
+                            rightCurrentFigureFieldCellX = rightCurrentFigureFieldCellX + 1;
+                        } else {
+                            System.out.println("BotAtRight: Failed to move right");
+                        }
+
+                    } else if (BotAction.ROTATE_CLOCKWISE.equals(botAction)) {
+                        Figure rotatedFigure = FigureUtils.getRotatedFigure(rightCurrentFigure);
+                        if (FieldUtils.canPlaceFigure(rightField.getData(), rotatedFigure.getData(), rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY)) {
+                            rightCurrentFigure.setOrientationId(rotatedFigure.getOrientationId());
+                            rightCurrentFigure.setData(rotatedFigure.getData());
+                        } else {
+                            System.out.println("BotAtRight: Failed to rotate");
+                        }
+
+                    } else {
+                        // No actions - lets drop down
+                        if (FieldUtils.canMoveDown(rightField.getData(), rightCurrentFigure.getData(), rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY)) {
+                            rightCurrentFigureFieldCellY = rightCurrentFigureFieldCellY + 1;
+                        }
+                    }
+
+                    resetRightControlsTimer();
+                }
+            }
         }
-
     }
 
     @Override
     public void render(Graphics2D g) {
-        field.render(g);
-        field.renderFigure(g, currentFigure, currentFigureFieldCellX, currentFigureFieldCellY);
+        g.setColor(Color.WHITE);
 
-        figurePreview.render(g);
-        figurePreview.renderFigure(g, nextFigure, 0, 0);
+        // Left player render
+        leftField.render(g);
+        leftField.renderFigure(g, leftCurrentFigure, leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY);
 
-        renderStatistics(g, 350, 170, 420, 15);
+        leftFigurePreview.render(g);
+        leftFigurePreview.renderFigure(g, leftNextFigure, 0, 0);
+
+        renderStatistics(g, leftStatistics, leftFieldPreviewScreenPositionX, 170, leftFieldPreviewScreenPositionX + 70, 15);
+
+        // Right player render
+        rightField.render(g);
+        rightField.renderFigure(g, rightCurrentFigure, rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY);
+
+        rightFigurePreview.render(g);
+        rightFigurePreview.renderFigure(g, rightNextFigure, 0, 0);
+
+        renderStatistics(g, rightStatistics, rightFieldPreviewScreenPositionX, 170, rightFieldPreviewScreenPositionX + 70, 15);
+
+        if (isLeftGameOver) {
+            g.setColor(Color.RED);
+            g.drawString("GAME OVER", leftFieldPreviewScreenPositionX, 170 + 15 * 9);
+        }
+        if (isRightGameOver) {
+            g.setColor(Color.RED);
+            g.drawString("GAME OVER", rightFieldPreviewScreenPositionX, 170 + 15 * 9);
+        }
     }
 
     @Override
@@ -168,41 +418,75 @@ public class GameScreen extends AbstractScreen {
 
     }
 
-    private void renderStatistics(Graphics2D g, int textX, int textY, int valueX, int dY) {
+    private void renderStatistics(Graphics2D g, Statistics statistics, int textX, int textY, int valueX, int dY) {
         g.drawString("Score", textX, textY);
         g.drawString(String.valueOf(statistics.getScore()), valueX, textY);
 
         g.drawString("Lines", textX, textY + dY);
         g.drawString(String.valueOf(statistics.getLines()), valueX, textY + dY);
 
-        g.drawString("Figure 1", textX, textY + dY * 2);
-        g.drawString(String.valueOf(statistics.getFiguresType1()), valueX, textY + dY * 2);
+        g.drawString("Figures", textX, textY + dY * 2);
+        g.drawString(String.valueOf(statistics.getFigures()), valueX, textY + dY * 2);
 
-        g.drawString("Figure 2", textX, textY + dY * 3);
-        g.drawString(String.valueOf(statistics.getFiguresType2()), valueX, textY + dY * 3);
+        g.drawString("Figure 1", textX, textY + dY * 3);
+        g.drawString(String.valueOf(statistics.getFiguresType1()), valueX, textY + dY * 3);
 
-        g.drawString("Figure 3", textX, textY + dY * 4);
-        g.drawString(String.valueOf(statistics.getFiguresType3()), valueX, textY + dY * 4);
+        g.drawString("Figure 2", textX, textY + dY * 4);
+        g.drawString(String.valueOf(statistics.getFiguresType2()), valueX, textY + dY * 4);
 
-        g.drawString("Figure 4", textX, textY + dY * 5);
-        g.drawString(String.valueOf(statistics.getFiguresType4()), valueX, textY + dY * 5);
+        g.drawString("Figure 3", textX, textY + dY * 5);
+        g.drawString(String.valueOf(statistics.getFiguresType3()), valueX, textY + dY * 5);
 
-        g.drawString("Figure 5", textX, textY + dY * 6);
-        g.drawString(String.valueOf(statistics.getFiguresType5()), valueX, textY + dY * 6);
+        g.drawString("Figure 4", textX, textY + dY * 6);
+        g.drawString(String.valueOf(statistics.getFiguresType4()), valueX, textY + dY * 6);
 
-        g.drawString("Figure 6", textX, textY + dY * 7);
-        g.drawString(String.valueOf(statistics.getFiguresType6()), valueX, textY + dY * 7);
+        g.drawString("Figure 5", textX, textY + dY * 7);
+        g.drawString(String.valueOf(statistics.getFiguresType5()), valueX, textY + dY * 7);
+
+        g.drawString("Figure 6", textX, textY + dY * 8);
+        g.drawString(String.valueOf(statistics.getFiguresType6()), valueX, textY + dY * 8);
     }
 
-    private boolean isControlsReady() {
-        return System.currentTimeMillis() > controlsTimer;
+    private Figure getFigureToPlay(int figureToPlayIndex) {
+        if (figureToPlayIndex >= figuresToPlay.size()) {
+            figuresToPlay.add(FigureUtils.getNextFigure());
+        }
+        return figuresToPlay.get(figureToPlayIndex).cloneFigure();
     }
 
-    private void resetControlsTimer() {
-        controlsTimer = System.currentTimeMillis() + 100;
+    private boolean isLeftControlsReady() {
+        return System.currentTimeMillis() > leftControlsTimer;
     }
 
-    private void updateStatistics(int linesCount) {
+    private void resetLeftControlsTimer() {
+        leftControlsTimer = System.currentTimeMillis() + 100;
+    }
+
+    private boolean isRightControlsReady() {
+        return System.currentTimeMillis() > rightControlsTimer;
+    }
+
+    private void resetRightControlsTimer() {
+        rightControlsTimer = System.currentTimeMillis() + 100;
+    }
+
+    private void updateStatisticsFigures(Statistics statistics, Figure figure) {
+        if (figure.getFigureId() == 1) {
+            statistics.addFiguresType1(1);
+        } else if (figure.getFigureId() == 2) {
+            statistics.addFiguresType2(1);
+        } else if (figure.getFigureId() == 3) {
+            statistics.addFiguresType3(1);
+        } else if (figure.getFigureId() == 4) {
+            statistics.addFiguresType4(1);
+        } else if (figure.getFigureId() == 5) {
+            statistics.addFiguresType5(1);
+        } else if (figure.getFigureId() == 6) {
+            statistics.addFiguresType6(1);
+        }
+    }
+
+    private void updateStatisticsScore(Statistics statistics, int linesCount) {
         if (linesCount <= 0 || linesCount > 4) {
             throw new RuntimeException("Wrong lines count: " + linesCount);
         }
@@ -216,5 +500,18 @@ public class GameScreen extends AbstractScreen {
         } else if (linesCount == 4) {
             statistics.addScore(1000);
         }
+    }
+
+    private AbstractBot resolvePlayer(int playerId) {
+        if (Constants.Players.NO_PLAYER == playerId) {
+            // Applicable for right side only
+            return null;
+        } else if (Constants.Players.HUMAN == playerId) {
+            // Applicable for left side only
+            return null;
+        } else if (Constants.Players.TEST_BOT == playerId) {
+            return new TestBot();
+        }
+        throw new RuntimeException("Player not resolved " + playerId);
     }
 }
