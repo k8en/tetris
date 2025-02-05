@@ -153,6 +153,13 @@ public class GameScreen extends AbstractScreen {
                     leftNextFigure.getFigureId(),
                     leftNextFigure.getOrientationId()
             );
+        } else {
+            DataCollectionUtils.saveStartConditions(
+                    leftCurrentFigure.getFigureId(),
+                    leftCurrentFigure.getOrientationId(),
+                    leftNextFigure.getFigureId(),
+                    leftField.getData()
+            );
         }
         if (botAtRight != null) {
             botAtRight.think(
@@ -184,7 +191,7 @@ public class GameScreen extends AbstractScreen {
                 } else {
                     // Collect this type of statistics for human play only
                     if (botAtLeft == null) {
-                        DataCollectionUtils.collect(leftField.getData(), leftCurrentFigure, leftCurrentFigureFieldCellX, leftNextFigure);
+                        DataCollectionUtils.collect(leftCurrentFigure.getOrientationId(), leftCurrentFigureFieldCellX);
                     }
 
                     FieldUtils.mergeData(leftField.getData(), leftCurrentFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY);
@@ -225,6 +232,13 @@ public class GameScreen extends AbstractScreen {
                                     leftCurrentFigureFieldCellX,
                                     leftNextFigure.getFigureId(),
                                     leftNextFigure.getOrientationId()
+                            );
+                        } else {
+                            DataCollectionUtils.saveStartConditions(
+                                    leftCurrentFigure.getFigureId(),
+                                    leftCurrentFigure.getOrientationId(),
+                                    leftNextFigure.getFigureId(),
+                                    leftField.getData()
                             );
                         }
                     }
