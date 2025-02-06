@@ -1,6 +1,7 @@
 package org.kdepo.games.tetris.desktop.model;
 
-import org.kdepo.games.tetris.desktop.Constants;
+import org.kdepo.games.tetris.shared.Constants;
+import org.kdepo.games.tetris.shared.model.Figure;
 
 import java.awt.*;
 

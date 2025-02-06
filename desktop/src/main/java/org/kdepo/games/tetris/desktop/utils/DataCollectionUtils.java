@@ -1,6 +1,6 @@
 package org.kdepo.games.tetris.desktop.utils;
 
-import org.kdepo.games.tetris.desktop.model.Figure;
+import org.kdepo.games.tetris.shared.model.Figure;
 
 import java.util.ArrayList;
 import java.util.List;

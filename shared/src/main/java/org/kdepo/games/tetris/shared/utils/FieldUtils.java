@@ -1,6 +1,6 @@
-package org.kdepo.games.tetris.desktop.utils;
+package org.kdepo.games.tetris.shared.utils;
 
-import org.kdepo.games.tetris.desktop.Constants;
+import org.kdepo.games.tetris.shared.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -112,6 +112,32 @@ public class FieldUtils {
             }
         }
         return false;
+    }
+
+    public static double getFieldDensity(int[][] fieldData) {
+        double notEmptyCells = 0;
+
+        for (int row = 0; row < fieldData.length; row++) {
+            for (int column = 0; column < fieldData[row].length; column++) {
+                if (fieldData[row][column] != 0) {
+                    notEmptyCells++;
+                }
+            }
+        }
+
+        int maxHeight = 0;
+        for (int column = 0; column < fieldData[0].length; column++) {
+            for (int row = fieldData.length - 1; row >= 0; row--) {
+                if (fieldData[row][column] != 0) {
+                    int height = fieldData.length - 1 - row;
+                    if (height > maxHeight) {
+                        maxHeight = height;
+                    }
+                }
+            }
+        }
+
+        return notEmptyCells / maxHeight;
     }
 
     public static List<Integer> getCompletedLinesIndexes(int[][] data) {

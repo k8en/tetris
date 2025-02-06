@@ -1,16 +1,17 @@
 package org.kdepo.games.tetris.desktop.screens;
 
 import org.kdepo.games.tetris.bot.AbstractBot;
+import org.kdepo.games.tetris.bot.SimpleBot;
 import org.kdepo.games.tetris.bot.TestBot;
 import org.kdepo.games.tetris.bot.model.BotAction;
-import org.kdepo.games.tetris.desktop.Constants;
-import org.kdepo.games.tetris.desktop.model.Field;
-import org.kdepo.games.tetris.desktop.model.Figure;
 import org.kdepo.games.tetris.desktop.model.FigurePreview;
 import org.kdepo.games.tetris.desktop.model.Statistics;
 import org.kdepo.games.tetris.desktop.utils.DataCollectionUtils;
-import org.kdepo.games.tetris.desktop.utils.FieldUtils;
-import org.kdepo.games.tetris.desktop.utils.FigureUtils;
+import org.kdepo.games.tetris.shared.Constants;
+import org.kdepo.games.tetris.shared.utils.FieldUtils;
+import org.kdepo.games.tetris.shared.utils.FigureUtils;
+import org.kdepo.games.tetris.shared.model.Field;
+import org.kdepo.games.tetris.shared.model.Figure;
 import org.kdepo.graphics.k2d.KeyHandler;
 import org.kdepo.graphics.k2d.MouseHandler;
 import org.kdepo.graphics.k2d.screens.AbstractScreen;
@@ -310,7 +311,7 @@ public class GameScreen extends AbstractScreen {
                     }
                     resetLeftControlsTimer();
                 } else if (keyHandler.isSpacePressed() && isLeftControlsReady()) {
-                    Figure rotatedFigure = FigureUtils.getRotatedFigure(leftCurrentFigure);
+                    Figure rotatedFigure = FigureUtils.getFigureRotated(leftCurrentFigure);
                     if (FieldUtils.canPlaceFigure(leftField.getData(), rotatedFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
                         leftCurrentFigure.setOrientationId(rotatedFigure.getOrientationId());
                         leftCurrentFigure.setData(rotatedFigure.getData());
@@ -336,7 +337,7 @@ public class GameScreen extends AbstractScreen {
                         }
 
                     } else if (BotAction.ROTATE_CLOCKWISE.equals(botAction)) {
-                        Figure rotatedFigure = FigureUtils.getRotatedFigure(leftCurrentFigure);
+                        Figure rotatedFigure = FigureUtils.getFigureRotated(leftCurrentFigure);
                         if (FieldUtils.canPlaceFigure(leftField.getData(), rotatedFigure.getData(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY)) {
                             leftCurrentFigure.setOrientationId(rotatedFigure.getOrientationId());
                             leftCurrentFigure.setData(rotatedFigure.getData());
@@ -374,7 +375,7 @@ public class GameScreen extends AbstractScreen {
                         }
 
                     } else if (BotAction.ROTATE_CLOCKWISE.equals(botAction)) {
-                        Figure rotatedFigure = FigureUtils.getRotatedFigure(rightCurrentFigure);
+                        Figure rotatedFigure = FigureUtils.getFigureRotated(rightCurrentFigure);
                         if (FieldUtils.canPlaceFigure(rightField.getData(), rotatedFigure.getData(), rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY)) {
                             rightCurrentFigure.setOrientationId(rotatedFigure.getOrientationId());
                             rightCurrentFigure.setData(rotatedFigure.getData());
@@ -400,8 +401,8 @@ public class GameScreen extends AbstractScreen {
         g.setColor(Color.WHITE);
 
         // Left player render
-        leftField.render(g);
-        leftField.renderFigure(g, leftCurrentFigure, leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY);
+        renderField(g, leftField);
+        renderFigure(g, leftCurrentFigure, leftField.getScreenPositionX(), leftField.getScreenPositionY(), leftCurrentFigureFieldCellX, leftCurrentFigureFieldCellY);
 
         leftFigurePreview.render(g);
         leftFigurePreview.renderFigure(g, leftNextFigure, 0, 0);
@@ -409,8 +410,8 @@ public class GameScreen extends AbstractScreen {
         renderStatistics(g, leftStatistics, leftFieldPreviewScreenPositionX, 170, leftFieldPreviewScreenPositionX + 70, 15);
 
         // Right player render
-        rightField.render(g);
-        rightField.renderFigure(g, rightCurrentFigure, rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY);
+        renderField(g, rightField);
+        renderFigure(g, rightCurrentFigure, rightField.getScreenPositionX(), rightField.getScreenPositionY(), rightCurrentFigureFieldCellX, rightCurrentFigureFieldCellY);
 
         rightFigurePreview.render(g);
         rightFigurePreview.renderFigure(g, rightNextFigure, 0, 0);
@@ -430,6 +431,61 @@ public class GameScreen extends AbstractScreen {
     @Override
     public void dispose() {
 
+    }
+
+    public void renderField(Graphics2D g, Field field) {
+        // Draw grid
+        for (int row = 0; row <= field.getData().length - Constants.FIELD_ROWS_HIDDEN; row++) {
+            g.drawLine(
+                    field.getScreenPositionX(),
+                    field.getScreenPositionY() + row * Constants.BLOCK_SIZE,
+                    field.getScreenPositionX() + Constants.FIELD_BLOCKS_HORIZONTALLY * Constants.BLOCK_SIZE,
+                    field.getScreenPositionY() + row * Constants.BLOCK_SIZE
+            );
+        }
+        for (int column = 0; column <= field.getData()[0].length; column++) {
+            g.drawLine(
+                    field.getScreenPositionX() + column * Constants.BLOCK_SIZE,
+                    field.getScreenPositionY(),
+                    field.getScreenPositionX() + column * Constants.BLOCK_SIZE,
+                    field.getScreenPositionY() + Constants.FIELD_BLOCKS_VERTICALLY * Constants.BLOCK_SIZE
+            );
+        }
+
+        // Draw field data (skip hidden space)
+        for (int row = 0; row < field.getData().length; row++) {
+            if (row < Constants.FIELD_ROWS_HIDDEN) {
+                continue;
+            }
+            for (int column = 0; column < field.getData()[0].length; column++) {
+                if (field.getData()[row][column] == 1) {
+                    g.fillRect(
+                            field.getScreenPositionX() + column * Constants.BLOCK_SIZE,
+                            field.getScreenPositionY() + (row - Constants.FIELD_ROWS_HIDDEN) * Constants.BLOCK_SIZE,
+                            Constants.BLOCK_SIZE,
+                            Constants.BLOCK_SIZE);
+                }
+            }
+        }
+    }
+
+    public void renderFigure(Graphics2D g, Figure figure, int fieldScreenPositionX, int fieldScreenPositionY, int fieldCellPositionX, int fieldCellPositionY) {
+        for (int figureRow = 0; figureRow < figure.getData().length; figureRow++) {
+            for (int figureColumn = 0; figureColumn < figure.getData()[0].length; figureColumn++) {
+
+                // If row is outside the hidden space
+                if (fieldCellPositionY + figureRow >= Constants.FIELD_ROWS_HIDDEN) {
+                    if (figure.getData()[figureRow][figureColumn] == 1) {
+                        g.fillRect(
+                                fieldScreenPositionX + (fieldCellPositionX + figureColumn) * Constants.BLOCK_SIZE,
+                                fieldScreenPositionY + (fieldCellPositionY + figureRow - Constants.FIELD_ROWS_HIDDEN) * Constants.BLOCK_SIZE,
+                                Constants.BLOCK_SIZE,
+                                Constants.BLOCK_SIZE
+                        );
+                    }
+                }
+            }
+        }
     }
 
     private void renderStatistics(Graphics2D g, Statistics statistics, int textX, int textY, int valueX, int dY) {
@@ -525,6 +581,8 @@ public class GameScreen extends AbstractScreen {
             return null;
         } else if (Constants.Players.TEST_BOT == playerId) {
             return new TestBot();
+        } else if (Constants.Players.SIMPLE_BOT == playerId) {
+            return new SimpleBot();
         }
         throw new RuntimeException("Player not resolved " + playerId);
     }

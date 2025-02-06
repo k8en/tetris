@@ -1,4 +1,6 @@
-package org.kdepo.games.tetris.desktop.model;
+package org.kdepo.games.tetris.shared.model;
+
+import org.kdepo.games.tetris.shared.utils.DataUtils;
 
 public class Figure {
 
@@ -39,12 +41,7 @@ public class Figure {
     public Figure cloneFigure() {
         int clonedFigureId = figureId;
         int clonedOrientationId = orientationId;
-        int[][] clonedData = new int[data.length][data[0].length];
-        for (int row = 0; row < data.length; row++) {
-            for (int column = 0; column < data[row].length; column++) {
-                clonedData[row][column] = data[row][column];
-            }
-        }
+        int[][] clonedData = DataUtils.clone(data);
 
         return new Figure(clonedFigureId, clonedOrientationId, clonedData);
     }

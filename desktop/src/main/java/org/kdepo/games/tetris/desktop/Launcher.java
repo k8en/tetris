@@ -2,6 +2,7 @@ package org.kdepo.games.tetris.desktop;
 
 import org.kdepo.games.tetris.desktop.screens.GameScreen;
 import org.kdepo.games.tetris.desktop.screens.TitleScreen;
+import org.kdepo.games.tetris.shared.Constants;
 import org.kdepo.graphics.k2d.GameEngine;
 import org.kdepo.graphics.k2d.GamePanel;
 

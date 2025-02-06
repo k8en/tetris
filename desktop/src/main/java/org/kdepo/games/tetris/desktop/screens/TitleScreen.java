@@ -1,6 +1,6 @@
 package org.kdepo.games.tetris.desktop.screens;
 
-import org.kdepo.games.tetris.desktop.Constants;
+import org.kdepo.games.tetris.shared.Constants;
 import org.kdepo.graphics.k2d.KeyHandler;
 import org.kdepo.graphics.k2d.MouseHandler;
 import org.kdepo.graphics.k2d.screens.AbstractScreen;
@@ -20,14 +20,16 @@ public class TitleScreen extends AbstractScreen {
     private static final int MI_LEFT_VARIANTS = 1;
     private final String[] leftVariants = {
             "HUMAN",
-            "TEST_BOT"
+            "TEST_BOT",
+            "SIMPLE_BOT"
     };
     private int leftVariantSelectedIndex;
 
     private static final int MI_RIGHT_VARIANTS = 2;
     private final String[] rightVariants = {
             "NOT USED",
-            "TEST_BOT"
+            "TEST_BOT",
+            "SIMPLE_BOT"
     };
     private int rightVariantSelectedIndex;
 
@@ -149,6 +151,8 @@ public class TitleScreen extends AbstractScreen {
             return Constants.Players.HUMAN;
         } else if ("TEST_BOT".equals(playerName)) {
             return Constants.Players.TEST_BOT;
+        } else if ("SIMPLE_BOT".equals(playerName)) {
+            return Constants.Players.SIMPLE_BOT;
         } else {
             throw new RuntimeException("Cannot resolve player id for " + playerName);
         }
