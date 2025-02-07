@@ -1,4 +1,4 @@
-package org.kdepo.games.tetris.bot;
+package org.kdepo.games.tetris.bot.search;
 
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.nd4j.evaluation.classification.Evaluation;

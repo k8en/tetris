@@ -1,4 +1,4 @@
-package org.kdepo.games.tetris.bot;
+package org.kdepo.games.tetris.bot.search;
 
 import org.nd4j.linalg.activations.Activation;
 

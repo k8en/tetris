@@ -8,15 +8,6 @@ import java.util.List;
 
 public class FieldUtils {
 
-    public static void printField(int[][] fieldData) {
-        for (int row = 0; row < fieldData.length; row++) {
-            for (int column = 0; column < fieldData[row].length; column++) {
-                System.out.print(fieldData[row][column]);
-            }
-            System.out.println();
-        }
-    }
-
     public static boolean canMoveDown(int[][] fieldData, int[][] figureData, int figureFieldCellX, int figureFieldCellY) {
         if (figureFieldCellY + figureData.length + 1 > fieldData.length) {
             return false;
@@ -138,6 +129,20 @@ public class FieldUtils {
         }
 
         return notEmptyCells / maxHeight;
+    }
+
+    public static int[] getFieldHeights(int[][] data) {
+        int[] fieldHeights = new int[data[0].length];
+        for (int column = 0; column < data[0].length; column++) {
+            int height = 0;
+            for (int row = data.length - 1; row >= 0; row--) {
+                if (data[row][column] != 0) {
+                    height = data.length - row;
+                }
+            }
+            fieldHeights[column] = height;
+        }
+        return fieldHeights;
     }
 
     public static List<Integer> getCompletedLinesIndexes(int[][] data) {

@@ -1,6 +1,11 @@
 package org.kdepo.games.tetris.shared.utils;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kdepo.games.tetris.shared.Constants;
 import org.kdepo.games.tetris.shared.model.Field;
 
@@ -114,6 +119,27 @@ public class FieldUtilsTests {
         Assertions.assertEquals(0.2d, density, "Field density error!");
 
         System.out.println("FieldUtilsTests.testGetFieldDensity2 - Tests completed");
+    }
+
+    @Test
+    void testGetFieldHeights() {
+        System.out.println("DataUtilsTests.testGetFieldDensity - Tests started");
+
+        int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
+
+        int[] fieldHeights = FieldUtils.getFieldHeights(fieldData);
+        int[] expectedHeights = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+        Assertions.assertArrayEquals(expectedHeights, fieldHeights, "Field heights error!");
+
+        fieldData[21][4] = 1;
+        fieldData[22][3] = 1;
+        fieldData[22][4] = 1;
+        fieldData[23][3] = 1;
+        fieldHeights = FieldUtils.getFieldHeights(fieldData);
+        int[] expectedHeights2 = {0, 0, 0, 2, 3, 0, 0, 0, 0, 0};
+        Assertions.assertArrayEquals(expectedHeights2, fieldHeights, "Field heights error!");
+
+        System.out.println("DataUtilsTests.testGetFieldDensity - Tests completed");
     }
 
     @AfterEach

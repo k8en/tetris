@@ -8,10 +8,10 @@ import org.kdepo.games.tetris.desktop.model.FigurePreview;
 import org.kdepo.games.tetris.desktop.model.Statistics;
 import org.kdepo.games.tetris.desktop.utils.DataCollectionUtils;
 import org.kdepo.games.tetris.shared.Constants;
-import org.kdepo.games.tetris.shared.utils.FieldUtils;
-import org.kdepo.games.tetris.shared.utils.FigureUtils;
 import org.kdepo.games.tetris.shared.model.Field;
 import org.kdepo.games.tetris.shared.model.Figure;
+import org.kdepo.games.tetris.shared.utils.FieldUtils;
+import org.kdepo.games.tetris.shared.utils.FigureUtils;
 import org.kdepo.graphics.k2d.KeyHandler;
 import org.kdepo.graphics.k2d.MouseHandler;
 import org.kdepo.graphics.k2d.screens.AbstractScreen;
@@ -157,7 +157,6 @@ public class GameScreen extends AbstractScreen {
         } else {
             DataCollectionUtils.saveStartConditions(
                     leftCurrentFigure.getFigureId(),
-                    leftCurrentFigure.getOrientationId(),
                     leftNextFigure.getFigureId(),
                     leftField.getData()
             );
@@ -237,7 +236,6 @@ public class GameScreen extends AbstractScreen {
                         } else {
                             DataCollectionUtils.saveStartConditions(
                                     leftCurrentFigure.getFigureId(),
-                                    leftCurrentFigure.getOrientationId(),
                                     leftNextFigure.getFigureId(),
                                     leftField.getData()
                             );

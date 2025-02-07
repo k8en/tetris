@@ -1,6 +1,8 @@
 package org.kdepo.games.tetris.desktop.utils;
 
 import org.kdepo.games.tetris.shared.model.Figure;
+import org.kdepo.games.tetris.shared.utils.DataUtils;
+import org.kdepo.games.tetris.shared.utils.FieldUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,6 @@ import java.util.List;
 public class DataCollectionUtils {
 
     private static int START_FIGURE_ID;
-    private static int START_FIGURE_ORIENTATION_ID;
     private static int NEXT_FIGURE_ID;
     private static int[][] FIELD_DATA;
 
@@ -35,61 +36,19 @@ public class DataCollectionUtils {
 
     private static boolean IS_DATA_PRINTED = false;
 
-    public static void collect(int[][] fieldData,
-                               Figure currentFigure,
-                               int currentFigureFieldCellX,
-                               Figure nextFigure) {
-        StringBuilder sb = new StringBuilder();
-
-        // Prepare orientation data
-        sb.append(currentFigure.getFigureId()).append(",");
-        sb.append(nextFigure.getFigureId()).append(",");
-        for (int column = 0; column < fieldData[0].length; column++) {
-            int height = 0;
-            for (int row = fieldData.length - 1; row >= 0; row--) {
-                if (fieldData[row][column] != 0) {
-                    height = fieldData.length - 1 - row;
-                }
-            }
-            sb.append(height).append(",");
-        }
-        sb.append(currentFigure.getOrientationId());
-        ORIENTATION_DATA.add(sb.toString());
-
-        sb.setLength(0);
-
-        // Prepare position data
-        sb.append(currentFigure.getFigureId()).append(",");
-        sb.append(currentFigure.getOrientationId()).append(",");
-        sb.append(nextFigure.getFigureId()).append(",");
-        for (int column = 0; column < fieldData[0].length; column++) {
-            int height = 0;
-            for (int row = fieldData.length - 1; row >= 0; row--) {
-                if (fieldData[row][column] != 0) {
-                    height = fieldData.length - 1 - row;
-                }
-            }
-            sb.append(height).append(",");
-        }
-        sb.append(currentFigureFieldCellX);
-        POSITION_DATA.add(sb.toString());
-    }
-
     public static void collect(int orientationId, int currentFigureFieldCellX) {
+        int[] fieldHeights = FieldUtils.getFieldHeights(FIELD_DATA);
+
         StringBuilder sb = new StringBuilder();
 
         // Prepare orientation data
         sb.append(START_FIGURE_ID).append(",");
         sb.append(NEXT_FIGURE_ID).append(",");
-        for (int column = 0; column < FIELD_DATA[0].length; column++) {
-            int height = 0;
-            for (int row = FIELD_DATA.length - 1; row >= 0; row--) {
-                if (FIELD_DATA[row][column] != 0) {
-                    height = FIELD_DATA.length - 1 - row;
-                }
-            }
-            sb.append(height).append(",");
+
+        for (int fieldHeight : fieldHeights) {
+            sb.append(fieldHeight).append(",");
         }
+
         sb.append(orientationId);
         ORIENTATION_DATA.add(sb.toString());
 
@@ -97,29 +56,23 @@ public class DataCollectionUtils {
 
         // Prepare position data
         sb.append(START_FIGURE_ID).append(",");
-        sb.append(START_FIGURE_ORIENTATION_ID).append(",");
+        sb.append(orientationId).append(",");
         sb.append(NEXT_FIGURE_ID).append(",");
-        for (int column = 0; column < FIELD_DATA[0].length; column++) {
-            int height = 0;
-            for (int row = FIELD_DATA.length - 1; row >= 0; row--) {
-                if (FIELD_DATA[row][column] != 0) {
-                    height = FIELD_DATA.length - 1 - row;
-                }
-            }
-            sb.append(height).append(",");
+
+        for (int fieldHeight : fieldHeights) {
+            sb.append(fieldHeight).append(",");
         }
+
         sb.append(currentFigureFieldCellX);
         POSITION_DATA.add(sb.toString());
     }
 
     public static void saveStartConditions(int startFigureId,
-                                           int startFigureOrientationId,
                                            int nextFigureId,
                                            int[][] fieldData) {
         START_FIGURE_ID = startFigureId;
-        START_FIGURE_ORIENTATION_ID = startFigureOrientationId;
         NEXT_FIGURE_ID = nextFigureId;
-        FIELD_DATA = fieldData;
+        FIELD_DATA = DataUtils.clone(fieldData);
     }
 
     public static void printCollectedData() {
