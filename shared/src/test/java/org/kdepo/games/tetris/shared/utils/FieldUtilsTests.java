@@ -123,7 +123,7 @@ public class FieldUtilsTests {
 
     @Test
     void testGetFieldHeights() {
-        System.out.println("DataUtilsTests.testGetFieldDensity - Tests started");
+        System.out.println("FieldUtilsTests.testGetFieldDensity - Tests started");
 
         int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
 
@@ -139,7 +139,7 @@ public class FieldUtilsTests {
         int[] expectedHeights2 = {0, 0, 0, 2, 3, 0, 0, 0, 0, 0};
         Assertions.assertArrayEquals(expectedHeights2, fieldHeights, "Field heights error!");
 
-        System.out.println("DataUtilsTests.testGetFieldDensity - Tests completed");
+        System.out.println("FieldUtilsTests.testGetFieldDensity - Tests completed");
     }
 
     @AfterEach

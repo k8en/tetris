@@ -12,7 +12,7 @@ public class FigureUtils {
     /**
      * figure 0, orientations 0,1,2,3
      */
-    private static final int[][] FIGURE_00 = {
+    public static final int[][] FIGURE_00 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {1, 1, 0, 0},
@@ -22,7 +22,7 @@ public class FigureUtils {
     /**
      * figure 1, orientations 0,2
      */
-    private static final int[][] FIGURE_01 = {
+    public static final int[][] FIGURE_01 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {0, 0, 0, 0},
@@ -32,7 +32,7 @@ public class FigureUtils {
     /**
      * figure 1, orientations 1,3
      */
-    private static final int[][] FIGURE_01_1 = {
+    public static final int[][] FIGURE_01_1 = {
             {1, 0, 0, 0},
             {1, 0, 0, 0},
             {1, 0, 0, 0},
@@ -42,7 +42,7 @@ public class FigureUtils {
     /**
      * figure 2, orientation 0
      */
-    private static final int[][] FIGURE_02 = {
+    public static final int[][] FIGURE_02 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {0, 1, 0, 0},
@@ -52,7 +52,7 @@ public class FigureUtils {
     /**
      * figure 2, orientation 1
      */
-    private static final int[][] FIGURE_02_1 = {
+    public static final int[][] FIGURE_02_1 = {
             {0, 0, 0, 0},
             {1, 0, 0, 0},
             {1, 1, 0, 0},
@@ -62,7 +62,7 @@ public class FigureUtils {
     /**
      * figure 2, orientation 2
      */
-    private static final int[][] FIGURE_02_2 = {
+    public static final int[][] FIGURE_02_2 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {1, 1, 1, 0},
@@ -72,7 +72,7 @@ public class FigureUtils {
     /**
      * figure 2, orientation 3
      */
-    private static final int[][] FIGURE_02_3 = {
+    public static final int[][] FIGURE_02_3 = {
             {0, 0, 0, 0},
             {0, 1, 0, 0},
             {1, 1, 0, 0},
@@ -82,7 +82,7 @@ public class FigureUtils {
     /**
      * figure 3, orientations 0,2
      */
-    private static final int[][] FIGURE_03 = {
+    public static final int[][] FIGURE_03 = {
             {0, 0, 0, 0},
             {1, 0, 0, 0},
             {1, 1, 0, 0},
@@ -92,7 +92,7 @@ public class FigureUtils {
     /**
      * figure 3, orientations 1,3
      */
-    private static final int[][] FIGURE_03_1 = {
+    public static final int[][] FIGURE_03_1 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {0, 1, 1, 0},
@@ -102,7 +102,7 @@ public class FigureUtils {
     /**
      * figure 4, orientations 0,2
      */
-    private static final int[][] FIGURE_04 = {
+    public static final int[][] FIGURE_04 = {
             {0, 0, 0, 0},
             {0, 1, 0, 0},
             {1, 1, 0, 0},
@@ -112,7 +112,7 @@ public class FigureUtils {
     /**
      * figure 4, orientations 1,3
      */
-    private static final int[][] FIGURE_04_1 = {
+    public static final int[][] FIGURE_04_1 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {1, 1, 0, 0},
@@ -122,7 +122,7 @@ public class FigureUtils {
     /**
      * figure 5, orientation 0
      */
-    private static final int[][] FIGURE_05 = {
+    public static final int[][] FIGURE_05 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {1, 0, 0, 0},
@@ -132,7 +132,7 @@ public class FigureUtils {
     /**
      * figure 5, orientation 1
      */
-    private static final int[][] FIGURE_05_1 = {
+    public static final int[][] FIGURE_05_1 = {
             {0, 0, 0, 0},
             {1, 1, 0, 0},
             {1, 0, 0, 0},
@@ -142,7 +142,7 @@ public class FigureUtils {
     /**
      * figure 5, orientation 2
      */
-    private static final int[][] FIGURE_05_2 = {
+    public static final int[][] FIGURE_05_2 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {1, 1, 1, 0},
@@ -152,7 +152,7 @@ public class FigureUtils {
     /**
      * figure 5, orientation 3
      */
-    private static final int[][] FIGURE_05_3 = {
+    public static final int[][] FIGURE_05_3 = {
             {0, 0, 0, 0},
             {0, 1, 0, 0},
             {0, 1, 0, 0},
@@ -162,7 +162,7 @@ public class FigureUtils {
     /**
      * figure 6, orientation 0
      */
-    private static final int[][] FIGURE_06 = {
+    public static final int[][] FIGURE_06 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {0, 0, 1, 0},
@@ -172,7 +172,7 @@ public class FigureUtils {
     /**
      * figure 6, orientation 1
      */
-    private static final int[][] FIGURE_06_1 = {
+    public static final int[][] FIGURE_06_1 = {
             {0, 0, 0, 0},
             {1, 0, 0, 0},
             {1, 0, 0, 0},
@@ -182,7 +182,7 @@ public class FigureUtils {
     /**
      * figure 6, orientation 2
      */
-    private static final int[][] FIGURE_06_2 = {
+    public static final int[][] FIGURE_06_2 = {
             {0, 0, 0, 0},
             {0, 0, 0, 0},
             {1, 1, 1, 0},
@@ -192,7 +192,7 @@ public class FigureUtils {
     /**
      * figure 6, orientation 3
      */
-    private static final int[][] FIGURE_06_3 = {
+    public static final int[][] FIGURE_06_3 = {
             {0, 0, 0, 0},
             {1, 1, 0, 0},
             {0, 1, 0, 0},
@@ -211,15 +211,7 @@ public class FigureUtils {
 
     public static Figure getNextFigure() {
         int figureId = RND.nextInt(7);
-        int orientationId = 0;
-
-        int[][] figureDataToCopy = FIGURES.get(figureId);
-        int[][] figureData = new int[figureDataToCopy.length][figureDataToCopy[0].length];
-        for (int row = 0; row < figureDataToCopy.length; row++) {
-            System.arraycopy(figureDataToCopy[row], 0, figureData[row], 0, figureDataToCopy[0].length);
-        }
-
-        return new Figure(figureId, orientationId, figureData);
+        return FigureUtils.getNextFigure(figureId);
     }
 
     public static Figure getNextFigure(int figureId) {
@@ -227,12 +219,7 @@ public class FigureUtils {
             throw new RuntimeException("Figure ID is out of range: " + figureId);
         }
         int orientationId = 0;
-
-        int[][] figureDataToCopy = FIGURES.get(figureId);
-        int[][] figureData = new int[figureDataToCopy.length][figureDataToCopy[0].length];
-        for (int row = 0; row < figureDataToCopy.length; row++) {
-            System.arraycopy(figureDataToCopy[row], 0, figureData[row], 0, figureDataToCopy[0].length);
-        }
+        int[][] figureData = DataUtils.clone(FIGURES.get(figureId));
 
         return new Figure(figureId, orientationId, figureData);
     }

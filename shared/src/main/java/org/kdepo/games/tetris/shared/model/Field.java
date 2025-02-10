@@ -5,6 +5,7 @@ import org.kdepo.games.tetris.shared.Constants;
 public class Field {
 
     private int screenPositionX;
+
     private int screenPositionY;
 
     private int[][] data;
