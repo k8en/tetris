@@ -116,19 +116,27 @@ public class FieldUtils {
             }
         }
 
+        int maxHeight = getFieldMaxHeight(fieldData);
+
+        return notEmptyCells / (maxHeight * Constants.FIELD_BLOCKS_HORIZONTALLY);
+    }
+
+    public static int getFieldMaxHeight(int[][] data) {
         int maxHeight = 0;
-        for (int column = 0; column < fieldData[0].length; column++) {
-            for (int row = fieldData.length - 1; row >= 0; row--) {
-                if (fieldData[row][column] != 0) {
-                    int height = fieldData.length - 1 - row;
-                    if (height > maxHeight) {
-                        maxHeight = height;
-                    }
+        boolean isBlockFound = false;
+        for (int row = 0; row < data.length; row++) {
+            for (int column = 0; column < data[row].length; column++) {
+                if (data[row][column] != 0) {
+                    maxHeight = data.length - row;
+                    isBlockFound = true;
+                    break;
                 }
             }
+            if (isBlockFound) {
+                break;
+            }
         }
-
-        return notEmptyCells / maxHeight;
+        return maxHeight;
     }
 
     public static int[] getFieldHeights(int[][] data) {

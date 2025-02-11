@@ -1,11 +1,6 @@
 package org.kdepo.games.tetris.shared.utils;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.kdepo.games.tetris.shared.Constants;
 import org.kdepo.games.tetris.shared.model.Field;
 
@@ -67,6 +62,25 @@ public class FieldUtilsTests {
         Assertions.assertFalse(FieldUtils.canMoveDown(fieldData, figureData, currentFigureFieldCellX, currentFigureFieldCellY), "Can move down failed!");
 
         System.out.println("FieldUtilsTests.testCanMoveDown - Tests completed");
+    }
+
+    @Test
+    void testGetFieldMaxHeight() {
+        System.out.println("FieldUtilsTests.testGetFieldMaxHeight - Tests started");
+
+        int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
+        int fieldMaxHeight = FieldUtils.getFieldMaxHeight(fieldData);
+        Assertions.assertEquals(0, fieldMaxHeight);
+
+        fieldData[23][1] = 1;
+        fieldMaxHeight = FieldUtils.getFieldMaxHeight(fieldData);
+        Assertions.assertEquals(1, fieldMaxHeight);
+
+        fieldData[21][1] = 1;
+        fieldMaxHeight = FieldUtils.getFieldMaxHeight(fieldData);
+        Assertions.assertEquals(3, fieldMaxHeight);
+
+        System.out.println("FieldUtilsTests.testGetFieldMaxHeight - Tests completed");
     }
 
     @Test
