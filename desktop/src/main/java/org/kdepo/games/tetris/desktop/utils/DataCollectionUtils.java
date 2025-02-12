@@ -5,6 +5,7 @@ import org.kdepo.games.tetris.shared.utils.DataUtils;
 import org.kdepo.games.tetris.shared.utils.FieldUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class DataCollectionUtils {
@@ -65,6 +66,8 @@ public class DataCollectionUtils {
 
         sb.append(currentFigureFieldCellX);
         POSITION_DATA.add(sb.toString());
+
+        System.out.println(" -> O:[" + orientationId + "] X:[" + currentFigureFieldCellX + "]");
     }
 
     public static void saveStartConditions(int startFigureId,
@@ -73,6 +76,9 @@ public class DataCollectionUtils {
         START_FIGURE_ID = startFigureId;
         NEXT_FIGURE_ID = nextFigureId;
         FIELD_DATA = DataUtils.clone(fieldData);
+
+        int[] fieldHeights = FieldUtils.getFieldHeights(FIELD_DATA);
+        System.out.print("F:[" + START_FIGURE_ID + "] N:[" + NEXT_FIGURE_ID + "] H:" + Arrays.toString(fieldHeights));
     }
 
     public static void printCollectedData() {

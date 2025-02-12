@@ -21,7 +21,8 @@ public class TitleScreen extends AbstractScreen {
     private final String[] leftVariants = {
             "HUMAN",
             "TEST_BOT",
-            "SIMPLE_BOT"
+            "SIMPLE_BOT",
+            "ADVANCED_BOT"
     };
     private int leftVariantSelectedIndex;
 
@@ -29,7 +30,8 @@ public class TitleScreen extends AbstractScreen {
     private final String[] rightVariants = {
             "NOT USED",
             "TEST_BOT",
-            "SIMPLE_BOT"
+            "SIMPLE_BOT",
+            "ADVANCED_BOT"
     };
     private int rightVariantSelectedIndex;
 
@@ -153,6 +155,8 @@ public class TitleScreen extends AbstractScreen {
             return Constants.Players.TEST_BOT;
         } else if ("SIMPLE_BOT".equals(playerName)) {
             return Constants.Players.SIMPLE_BOT;
+        } else if ("ADVANCED_BOT".equals(playerName)) {
+            return Constants.Players.ADVANCED_BOT;
         } else {
             throw new RuntimeException("Cannot resolve player id for " + playerName);
         }

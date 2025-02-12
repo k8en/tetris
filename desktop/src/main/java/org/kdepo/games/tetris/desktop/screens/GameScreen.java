@@ -1,6 +1,7 @@
 package org.kdepo.games.tetris.desktop.screens;
 
 import org.kdepo.games.tetris.bot.AbstractBot;
+import org.kdepo.games.tetris.bot.AdvancedBot;
 import org.kdepo.games.tetris.bot.SimpleBot;
 import org.kdepo.games.tetris.bot.TestBot;
 import org.kdepo.games.tetris.bot.model.BotAction;
@@ -205,14 +206,14 @@ public class GameScreen extends AbstractScreen {
 
                         // Print this type of statistics for human play only
                         if (botAtLeft == null && leftStatistics.getLines() >= 100) {
-                            System.out.println("Score: " + leftStatistics.getScore());
-                            System.out.println("Lines: " + leftStatistics.getLines());
-                            DataCollectionUtils.printCollectedData();
+                            //System.out.println("Score: " + leftStatistics.getScore());
+                            //System.out.println("Lines: " + leftStatistics.getLines());
+                            //DataCollectionUtils.printCollectedData();
                         }
                     }
 
                     if (FieldUtils.isFieldOverflow(leftField.getData())) {
-                        System.out.println("Game Over (Left)");
+                        //System.out.println("Game Over (Left)");
                         isLeftGameOver = true;
 
                     } else {
@@ -261,7 +262,7 @@ public class GameScreen extends AbstractScreen {
                     }
 
                     if (FieldUtils.isFieldOverflow(rightField.getData())) {
-                        System.out.println("Game Over (Right)");
+                        //System.out.println("Game Over (Right)");
                         isRightGameOver = true;
 
                     } else {
@@ -581,6 +582,8 @@ public class GameScreen extends AbstractScreen {
             return new TestBot();
         } else if (Constants.Players.SIMPLE_BOT == playerId) {
             return new SimpleBot();
+        } else if (Constants.Players.ADVANCED_BOT == playerId) {
+            return new AdvancedBot();
         }
         throw new RuntimeException("Player not resolved " + playerId);
     }

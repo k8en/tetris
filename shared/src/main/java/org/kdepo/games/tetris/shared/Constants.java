@@ -16,6 +16,7 @@ public class Constants {
         int HUMAN = 1;
         int TEST_BOT = 2;
         int SIMPLE_BOT = 3;
+        int ADVANCED_BOT = 4;
     }
 
     public interface ScreenParameters {
