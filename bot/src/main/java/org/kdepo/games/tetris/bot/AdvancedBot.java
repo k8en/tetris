@@ -6,8 +6,22 @@ import org.kdepo.games.tetris.shared.utils.FigureUtils;
 
 public class AdvancedBot extends SimpleBot {
 
+    private int coveredBlocksWeight;
+
+    private int pitsPeaksWeight;
+
+    private int densityWeight;
+
+    private int overheightWeight;
+
     public AdvancedBot() {
         super();
+
+        // 59500 score in simulator
+        coveredBlocksWeight = 166;
+        pitsPeaksWeight = 23;
+        densityWeight = 24;
+        overheightWeight = 34;
     }
 
     @Override
@@ -118,27 +132,69 @@ public class AdvancedBot extends SimpleBot {
                 }
             }
         }
-        estimation = estimation - coveredBlocks * 12;
+        estimation = estimation - coveredBlocks * coveredBlocksWeight;
 
         // Estimate pits/peaks (3 or more blocks)
         int[] fieldHeights = FieldUtils.getFieldHeights(fieldData);
         for (int i = 0; i < fieldHeights.length - 1; i++) {
             int difference = Math.abs(fieldHeights[i] - fieldHeights[i + 1]);
             if (difference >= 3) {
-                estimation = estimation - (difference - 3) * 25;
+                estimation = estimation - (difference - 3) * pitsPeaksWeight;
             }
         }
 
         // Estimate density
         double density = FieldUtils.getFieldDensity(fieldData);
-        estimation = estimation - (1 - density) * 15;
+        estimation = estimation - (1 - density) * densityWeight;
 
         // Estimate max height (5 or more blocks)
         int height = FieldUtils.getFieldMaxHeight(fieldData);
         if (height > 4) {
-            estimation = estimation - (height - 4) * 75;
+            estimation = estimation - (height - 4) * overheightWeight;
         }
 
         return estimation;
+    }
+
+    public int getCoveredBlocksWeight() {
+        return coveredBlocksWeight;
+    }
+
+    public void setCoveredBlocksWeight(int coveredBlocksWeight) {
+        this.coveredBlocksWeight = coveredBlocksWeight;
+    }
+
+    public int getPitsPeaksWeight() {
+        return pitsPeaksWeight;
+    }
+
+    public void setPitsPeaksWeight(int pitsPeaksWeight) {
+        this.pitsPeaksWeight = pitsPeaksWeight;
+    }
+
+    public int getDensityWeight() {
+        return densityWeight;
+    }
+
+    public void setDensityWeight(int densityWeight) {
+        this.densityWeight = densityWeight;
+    }
+
+    public int getOverheightWeight() {
+        return overheightWeight;
+    }
+
+    public void setOverheightWeight(int overheightWeight) {
+        this.overheightWeight = overheightWeight;
+    }
+
+    @Override
+    public String toString() {
+        return "AdvancedBot{" +
+                "coveredBlocksWeight=" + coveredBlocksWeight +
+                ", pitsPeaksWeight=" + pitsPeaksWeight +
+                ", densityWeight=" + densityWeight +
+                ", overheightWeight=" + overheightWeight +
+                '}';
     }
 }
