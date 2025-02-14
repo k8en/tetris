@@ -4,6 +4,9 @@ import org.kdepo.games.tetris.bot.model.BotAction;
 
 import java.util.Random;
 
+/**
+ * Bot to test game base logic
+ */
 public class TestBot extends AbstractBot {
 
     private static final Random RND = new Random(System.currentTimeMillis());

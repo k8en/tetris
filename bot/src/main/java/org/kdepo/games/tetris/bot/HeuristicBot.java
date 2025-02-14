@@ -4,24 +4,39 @@ import org.kdepo.games.tetris.shared.utils.DataUtils;
 import org.kdepo.games.tetris.shared.utils.FieldUtils;
 import org.kdepo.games.tetris.shared.utils.FigureUtils;
 
-public class AdvancedBot extends SimpleBot {
+/**
+ * A bot that uses heuristic analysis of the playing field to make decisions
+ */
+public class HeuristicBot extends SimpleBot {
 
+    /**
+     * Weight for covered blocks estimation
+     */
     private int coveredBlocksWeight;
 
+    /**
+     * Weight for pits/peaks (3 or more blocks) estimation
+     */
     private int pitsPeaksWeight;
 
+    /**
+     * Weight for estimation field density
+     */
     private int densityWeight;
 
+    /**
+     * Weight for field height estimation
+     */
     private int overheightWeight;
 
-    public AdvancedBot() {
+    public HeuristicBot() {
         super();
 
-        // 59500 score in simulator
-        coveredBlocksWeight = 166;
-        pitsPeaksWeight = 23;
-        densityWeight = 24;
-        overheightWeight = 34;
+        // 60400 score in simulator
+        coveredBlocksWeight = 215;
+        pitsPeaksWeight = 45;
+        densityWeight = 90;
+        overheightWeight = 49;
     }
 
     @Override
@@ -190,7 +205,7 @@ public class AdvancedBot extends SimpleBot {
 
     @Override
     public String toString() {
-        return "AdvancedBot{" +
+        return "HeuristicBot{" +
                 "coveredBlocksWeight=" + coveredBlocksWeight +
                 ", pitsPeaksWeight=" + pitsPeaksWeight +
                 ", densityWeight=" + densityWeight +

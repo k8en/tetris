@@ -2,26 +2,59 @@ package org.kdepo.games.tetris.bot.simulator;
 
 public class SimulationResult {
 
+    /**
+     * Is simulation interrupted due to field overflow
+     */
     private boolean isGameOver;
 
+    /**
+     * Number of iterations completed during simulation
+     */
     private int iterationsCompleted;
 
+    /**
+     * Number of points scored during the simulation
+     */
     private int scoreTotal;
 
+    /**
+     * How many times single line collected
+     */
     private int linesCount1;
 
+    /**
+     * How many times double lines collected
+     */
     private int linesCount2;
 
+    /**
+     * How many times triple lines collected
+     */
     private int linesCount3;
 
+    /**
+     * How many times quadruple lines collected
+     */
     private int linesCount4;
 
+    /**
+     * Parameter used to run simulation for {@link org.kdepo.games.tetris.bot.HeuristicBot}
+     */
     private int coveredBlocksWeight;
 
+    /**
+     * Parameter used to run simulation for {@link org.kdepo.games.tetris.bot.HeuristicBot}
+     */
     private int pitsPeaksWeight;
 
+    /**
+     * Parameter used to run simulation for {@link org.kdepo.games.tetris.bot.HeuristicBot}
+     */
     private int densityWeight;
 
+    /**
+     * Parameter used to run simulation for {@link org.kdepo.games.tetris.bot.HeuristicBot}
+     */
     private int overheightWeight;
 
     public SimulationResult() {

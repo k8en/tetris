@@ -10,11 +10,11 @@ import org.kdepo.games.tetris.shared.Constants;
 import org.kdepo.games.tetris.shared.utils.DataUtils;
 import org.kdepo.games.tetris.shared.utils.FigureUtils;
 
-public class AdvancedBotTests {
+public class HeuristicBotTests {
 
     @BeforeAll
     static void setup() {
-        System.out.println("AdvancedBotTests - Tests started");
+        System.out.println("HeuristicBotTests - Tests started");
     }
 
     @BeforeEach
@@ -24,7 +24,7 @@ public class AdvancedBotTests {
 
     @Test
     void testThink() {
-        System.out.println("AdvancedBotTests.testThink - Tests started");
+        System.out.println("HeuristicBotTests.testThink - Tests started");
 
         int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
         int currentFigureFieldCellX = 3;
@@ -43,27 +43,27 @@ public class AdvancedBotTests {
         System.out.println("Figure data:");
         DataUtils.printToConsole(figureData);
 
-        AdvancedBot advancedBot = new AdvancedBot();
-        advancedBot.think(fieldData, currentFigureId, 0, currentFigureFieldCellX, 0, 0);
+        HeuristicBot heuristicBot = new HeuristicBot();
+        heuristicBot.think(fieldData, currentFigureId, 0, currentFigureFieldCellX, 0, 0);
 
-//        Assertions.assertEquals(BotAction.ROTATE_CLOCKWISE, advancedBot.getNextAction());
-//        Assertions.assertEquals(BotAction.ROTATE_CLOCKWISE, advancedBot.getNextAction());
-//        Assertions.assertEquals(BotAction.MOVE_RIGHT, advancedBot.getNextAction());
-//        Assertions.assertEquals(BotAction.MOVE_RIGHT, advancedBot.getNextAction());
-//        Assertions.assertNull(advancedBot.getNextAction());
+//        Assertions.assertEquals(BotAction.ROTATE_CLOCKWISE, heuristicBot.getNextAction());
+//        Assertions.assertEquals(BotAction.ROTATE_CLOCKWISE, heuristicBot.getNextAction());
+//        Assertions.assertEquals(BotAction.MOVE_RIGHT, heuristicBot.getNextAction());
+//        Assertions.assertEquals(BotAction.MOVE_RIGHT, heuristicBot.getNextAction());
+//        Assertions.assertNull(heuristicBot.getNextAction());
 
         BotAction botAction;
         do {
-            botAction = advancedBot.getNextAction();
+            botAction = heuristicBot.getNextAction();
             System.out.println(botAction);
         } while (botAction != null);
 
-        System.out.println("AdvancedBotTests.testThink - Tests completed");
+        System.out.println("HeuristicBotTests.testThink - Tests completed");
     }
 
     @Test
     void testThink1() {
-        System.out.println("AdvancedBotTests.testThink - Tests started");
+        System.out.println("HeuristicBotTests.testThink - Tests started");
 
         int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
         int currentFigureFieldCellX = 3;
@@ -85,27 +85,27 @@ public class AdvancedBotTests {
 
         DataUtils.printToConsole(fieldData);
 
-        AdvancedBot advancedBot = new AdvancedBot();
-        advancedBot.think(fieldData, 2, 0, currentFigureFieldCellX, 0, 0);
+        HeuristicBot heuristicBot = new HeuristicBot();
+        heuristicBot.think(fieldData, 2, 0, currentFigureFieldCellX, 0, 0);
 
-//        Assertions.assertEquals(BotAction.ROTATE_CLOCKWISE, advancedBot.getNextAction());
-//        Assertions.assertEquals(BotAction.ROTATE_CLOCKWISE, advancedBot.getNextAction());
-//        Assertions.assertEquals(BotAction.MOVE_RIGHT, advancedBot.getNextAction());
-//        Assertions.assertEquals(BotAction.MOVE_RIGHT, advancedBot.getNextAction());
-//        Assertions.assertNull(advancedBot.getNextAction());
+//        Assertions.assertEquals(BotAction.ROTATE_CLOCKWISE, heuristicBot.getNextAction());
+//        Assertions.assertEquals(BotAction.ROTATE_CLOCKWISE, heuristicBot.getNextAction());
+//        Assertions.assertEquals(BotAction.MOVE_RIGHT, heuristicBot.getNextAction());
+//        Assertions.assertEquals(BotAction.MOVE_RIGHT, heuristicBot.getNextAction());
+//        Assertions.assertNull(heuristicBot.getNextAction());
 
         BotAction botAction;
         do {
-            botAction = advancedBot.getNextAction();
+            botAction = heuristicBot.getNextAction();
             System.out.println(botAction);
         } while (botAction != null);
 
-        System.out.println("AdvancedBotTests.testThink - Tests completed");
+        System.out.println("HeuristicBotTests.testThink - Tests completed");
     }
 
     @Test
     void testThink2() {
-        System.out.println("AdvancedBotTests.testThink - Tests started");
+        System.out.println("HeuristicBotTests.testThink - Tests started");
 
         int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
         int currentFigureFieldCellX = 3;
@@ -142,16 +142,16 @@ public class AdvancedBotTests {
 
 //        DataUtils.printToConsole(fieldData);
 
-        AdvancedBot advancedBot = new AdvancedBot();
-        advancedBot.think(fieldData, 1, 0, currentFigureFieldCellX, 0, 0);
+        HeuristicBot heuristicBot = new HeuristicBot();
+        heuristicBot.think(fieldData, 1, 0, currentFigureFieldCellX, 0, 0);
 
 //        BotAction botAction;
 //        do {
-//            botAction = advancedBot.getNextAction();
+//            botAction = heuristicBot.getNextAction();
 //            System.out.println(botAction);
 //        } while (botAction != null);
 
-        System.out.println("AdvancedBotTests.testThink - Tests completed");
+        System.out.println("HeuristicBotTests.testThink - Tests completed");
     }
 
     @AfterEach
@@ -161,6 +161,6 @@ public class AdvancedBotTests {
 
     @AfterAll
     static void done() {
-        System.out.println("AdvancedBotTests - Tests completed");
+        System.out.println("HeuristicBotTests - Tests completed");
     }
 }

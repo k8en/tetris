@@ -1,7 +1,7 @@
 package org.kdepo.games.tetris.desktop.screens;
 
 import org.kdepo.games.tetris.bot.AbstractBot;
-import org.kdepo.games.tetris.bot.AdvancedBot;
+import org.kdepo.games.tetris.bot.HeuristicBot;
 import org.kdepo.games.tetris.bot.SimpleBot;
 import org.kdepo.games.tetris.bot.TestBot;
 import org.kdepo.games.tetris.bot.model.BotAction;
@@ -582,8 +582,8 @@ public class GameScreen extends AbstractScreen {
             return new TestBot();
         } else if (Constants.Players.SIMPLE_BOT == playerId) {
             return new SimpleBot();
-        } else if (Constants.Players.ADVANCED_BOT == playerId) {
-            return new AdvancedBot();
+        } else if (Constants.Players.HEURISTIC_BOT == playerId) {
+            return new HeuristicBot();
         }
         throw new RuntimeException("Player not resolved " + playerId);
     }

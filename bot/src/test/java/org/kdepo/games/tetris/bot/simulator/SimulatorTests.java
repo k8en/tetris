@@ -5,7 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kdepo.games.tetris.bot.AdvancedBot;
+import org.kdepo.games.tetris.bot.HeuristicBot;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,7 +31,7 @@ public class SimulatorTests {
     void testSimulate() {
         Simulator simulator = new Simulator();
 
-        AdvancedBot bot = new AdvancedBot();
+        HeuristicBot bot = new HeuristicBot();
         SimulationResult simulationResult = simulator.simulate(bot);
 
         if (simulationResult.isGameOver()) {
@@ -57,7 +57,7 @@ public class SimulatorTests {
             for (int pitsPeaksDelta = 0; pitsPeaksDelta < 100; pitsPeaksDelta++) {
                 for (int densityDelta = 0; densityDelta < 100; densityDelta++) {
                     for (int overheightDelta = 0; overheightDelta < 100; overheightDelta++) {
-                        AdvancedBot bot = new AdvancedBot();
+                        HeuristicBot bot = new HeuristicBot();
                         bot.setCoveredBlocksWeight(0 + coveredBlocksDelta);
                         bot.setPitsPeaksWeight(0 + pitsPeaksDelta);
                         bot.setDensityWeight(0 + densityDelta);
@@ -99,24 +99,24 @@ public class SimulatorTests {
         Simulator simulator = new Simulator();
 
         int populationSize = 100;
-        int coveredBlocksWeightMax = 100;
+        int coveredBlocksWeightMax = 200;
         int pitsPeaksWeightMax = 100;
         int densityWeightMax = 100;
         int overheightWeightMax = 100;
 
         // Generate initial population with random parameters
-        List<AdvancedBot> population = simulator.generateInitialPopulation(populationSize, coveredBlocksWeightMax, pitsPeaksWeightMax, densityWeightMax, overheightWeightMax);
+        List<HeuristicBot> population = simulator.generateInitialPopulation(populationSize, coveredBlocksWeightMax, pitsPeaksWeightMax, densityWeightMax, overheightWeightMax);
 
-        AdvancedBot adam = new AdvancedBot();
-        adam.setCoveredBlocksWeight(166);
-        adam.setPitsPeaksWeight(23);
-        adam.setDensityWeight(24);
-        adam.setOverheightWeight(34);
-        population.add(0, adam);
+        HeuristicBot adam = new HeuristicBot();
+        adam.setCoveredBlocksWeight(215);
+        adam.setPitsPeaksWeight(45);
+        adam.setDensityWeight(90);
+        adam.setOverheightWeight(49);
+        population.add(adam);
 
         while (true) {
             List<SimulationResult> resultsList = new ArrayList<>();
-            for (AdvancedBot bot : population) {
+            for (HeuristicBot bot : population) {
                 SimulationResult result = simulator.simulate(bot);
                 result.setCoveredBlocksWeight(bot.getCoveredBlocksWeight());
                 result.setPitsPeaksWeight(bot.getPitsPeaksWeight());
@@ -134,13 +134,13 @@ public class SimulatorTests {
             System.out.println(resultsList.get(0));
 
             // Check if we found good configuration
-            if (resultsList.get(0).getScoreTotal() > 60000) {
+            if (resultsList.get(0).getScoreTotal() > 65000) {
                 break;
             }
 
             // Mutate to new generation
             population.clear();
-            AdvancedBot bestBot = new AdvancedBot();
+            HeuristicBot bestBot = new HeuristicBot();
             bestBot.setCoveredBlocksWeight(resultsList.get(0).getCoveredBlocksWeight());
             bestBot.setPitsPeaksWeight(resultsList.get(0).getPitsPeaksWeight());
             bestBot.setDensityWeight(resultsList.get(0).getDensityWeight());
@@ -149,7 +149,7 @@ public class SimulatorTests {
             for (int i = 0; i < 10; i++) {
                 SimulationResult simulationResult = resultsList.get(i);
                 for (int n = 0; n < 10; n++) {
-                    AdvancedBot newbornBot = new AdvancedBot();
+                    HeuristicBot newbornBot = new HeuristicBot();
                     // Copy from parent
                     int coveredBlocksWeight = simulationResult.getCoveredBlocksWeight() + RND.nextInt(-10, 10);
                     newbornBot.setCoveredBlocksWeight(coveredBlocksWeight);

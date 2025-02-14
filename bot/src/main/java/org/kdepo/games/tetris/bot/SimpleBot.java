@@ -8,6 +8,9 @@ import org.kdepo.games.tetris.shared.utils.FigureUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A bot that analyzes the filling density of the playing field to make decisions
+ */
 public class SimpleBot extends AbstractBot {
 
     public SimpleBot() {
@@ -89,6 +92,13 @@ public class SimpleBot extends AbstractBot {
         botActionList = prepareActionList(additionalFigureRotations, currentFigureFieldCellX, bestFigureFieldCellX);
     }
 
+    /**
+     * Returns figure leftmost available position
+     *
+     * @param fieldData  field data
+     * @param figureData figure data
+     * @return leftmost available position
+     */
     protected int getFigureLeftmostPosition(int[][] fieldData, int[][] figureData) {
         int minFieldCellX = 3;
         while (FieldUtils.canMoveLeft(fieldData, figureData, minFieldCellX, 0)) {
@@ -97,6 +107,13 @@ public class SimpleBot extends AbstractBot {
         return minFieldCellX;
     }
 
+    /**
+     * Returns figure rightmost available position
+     *
+     * @param fieldData  field data
+     * @param figureData figure data
+     * @return rightmost available position
+     */
     protected int getFigureRightmostPosition(int[][] fieldData, int[][] figureData) {
         int maxFieldCellX = 3;
         while (FieldUtils.canMoveRight(fieldData, figureData, maxFieldCellX, 0)) {
@@ -105,6 +122,14 @@ public class SimpleBot extends AbstractBot {
         return maxFieldCellX;
     }
 
+    /**
+     * Returns figure lowest available position
+     *
+     * @param fieldData  field data
+     * @param figureData figure data
+     * @param fieldCellX horizontal position on a field
+     * @return lowest available position
+     */
     protected int getFigureLowestPosition(int[][] fieldData, int[][] figureData, int fieldCellX) {
         int fieldCellY = 0;
         while (FieldUtils.canMoveDown(fieldData, figureData, fieldCellX, fieldCellY)) {
@@ -113,6 +138,14 @@ public class SimpleBot extends AbstractBot {
         return fieldCellY;
     }
 
+    /**
+     * Generates bot actions list based on figure target position
+     *
+     * @param rotations   how many times to rotate figure
+     * @param sourceCellX figure start horizontal position
+     * @param targetCellX figure target horizontal position
+     * @return bot actions list based on figure target position
+     */
     protected List<BotAction> prepareActionList(int rotations, int sourceCellX, int targetCellX) {
         List<BotAction> actionList = new ArrayList<>();
 

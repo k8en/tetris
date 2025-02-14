@@ -1,7 +1,7 @@
 package org.kdepo.games.tetris.bot.simulator;
 
 import org.kdepo.games.tetris.bot.AbstractBot;
-import org.kdepo.games.tetris.bot.AdvancedBot;
+import org.kdepo.games.tetris.bot.HeuristicBot;
 import org.kdepo.games.tetris.bot.model.BotAction;
 import org.kdepo.games.tetris.shared.model.Field;
 import org.kdepo.games.tetris.shared.model.Figure;
@@ -76,6 +76,12 @@ public class Simulator {
         return selectedFigureId;
     }
 
+    /**
+     * Simulate game play without GUI and figures drop delay with predefined figures sequence
+     *
+     * @param bot bot to test with simulation
+     * @return {@link SimulationResult} to estimate bot play efficiency
+     */
     public SimulationResult simulate(AbstractBot bot) {
         SimulationResult result = new SimulationResult();
 
@@ -171,8 +177,17 @@ public class Simulator {
         return result;
     }
 
-    public AdvancedBot generateBotWithRandomParameters(int coveredBlocksWeightMax, int pitsPeaksWeightMax, int densityWeightMax, int overheightWeightMax) {
-        AdvancedBot bot = new AdvancedBot();
+    /**
+     * Creates HeuristicBot with random parameters taken from predefined range
+     *
+     * @param coveredBlocksWeightMax coveredBlocksWeight max parameter
+     * @param pitsPeaksWeightMax     pitsPeaksWeight max parameter
+     * @param densityWeightMax       densityWeight max parameter
+     * @param overheightWeightMax    overheightWeight max parameter
+     * @return {@link HeuristicBot} with random parameters taken from predefined range
+     */
+    public HeuristicBot generateBotWithRandomParameters(int coveredBlocksWeightMax, int pitsPeaksWeightMax, int densityWeightMax, int overheightWeightMax) {
+        HeuristicBot bot = new HeuristicBot();
         bot.setCoveredBlocksWeight(RND.nextInt(coveredBlocksWeightMax));
         bot.setPitsPeaksWeight(RND.nextInt(pitsPeaksWeightMax));
         bot.setDensityWeight(RND.nextInt(densityWeightMax));
@@ -181,8 +196,18 @@ public class Simulator {
         return bot;
     }
 
-    public List<AdvancedBot> generateInitialPopulation(int populationSize, int coveredBlocksWeightMax, int pitsPeaksWeightMax, int densityWeightMax, int overheightWeightMax) {
-        List<AdvancedBot> initialPopulation = new ArrayList<>();
+    /**
+     * Creates the list of HeuristicBot with random parameters taken from predefined range
+     *
+     * @param populationSize         list size
+     * @param coveredBlocksWeightMax coveredBlocksWeight max parameter
+     * @param pitsPeaksWeightMax     pitsPeaksWeight max parameter
+     * @param densityWeightMax       densityWeight max parameter
+     * @param overheightWeightMax    overheightWeight max parameter
+     * @return the list of {@link HeuristicBot} with random parameters taken from predefined range
+     */
+    public List<HeuristicBot> generateInitialPopulation(int populationSize, int coveredBlocksWeightMax, int pitsPeaksWeightMax, int densityWeightMax, int overheightWeightMax) {
+        List<HeuristicBot> initialPopulation = new ArrayList<>();
         for (int i = 0; i < populationSize; i++) {
             initialPopulation.add(generateBotWithRandomParameters(coveredBlocksWeightMax, pitsPeaksWeightMax, densityWeightMax, overheightWeightMax));
         }
