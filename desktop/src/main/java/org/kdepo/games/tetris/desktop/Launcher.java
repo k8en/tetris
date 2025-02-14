@@ -10,6 +10,7 @@ import javax.swing.*;
 import java.util.HashMap;
 import java.util.Map;
 
+// "mvn clean compile assembly:single" to get executable jar
 public class Launcher {
 
     public static void main(String[] args) {
