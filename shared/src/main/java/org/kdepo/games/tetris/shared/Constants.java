@@ -2,6 +2,14 @@ package org.kdepo.games.tetris.shared;
 
 public class Constants {
 
+    /**
+     * Versioning as X.Y.Z
+     * X - releases
+     * Y - improvements / refactoring
+     * Z - bugfix counter
+     */
+    public static String VERSION = "1.0.0";
+
     public static final int FIELD_ROWS_HIDDEN = 4;
     public static final int FIELD_BLOCKS_HORIZONTALLY = 10;
     public static final int FIELD_BLOCKS_VERTICALLY = 20;

@@ -131,6 +131,8 @@ public class TitleScreen extends AbstractScreen {
 
         g.drawString("RIGHT", 20, 50);
         g.drawString(rightVariants[rightVariantSelectedIndex], 120, 50);
+
+        g.drawString(Constants.VERSION, 12, Constants.SCREEN_HEIGHT - 15);
     }
 
     @Override
