@@ -51,7 +51,7 @@ public class TitleScreen extends AbstractScreen {
         leftVariantSelectedIndex = 0;
         rightVariantSelectedIndex = 0;
 
-        controlsTimer = System.currentTimeMillis();
+        controlsTimer = System.currentTimeMillis() + 100;
     }
 
     @Override

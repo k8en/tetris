@@ -81,6 +81,12 @@ public class DataCollectionUtils {
         System.out.print("F:[" + START_FIGURE_ID + "] N:[" + NEXT_FIGURE_ID + "] H:" + Arrays.toString(fieldHeights));
     }
 
+    public static void reset() {
+        ORIENTATION_DATA.clear();
+        POSITION_DATA.clear();
+        IS_DATA_PRINTED = false;
+    }
+
     public static void printCollectedData() {
         if (IS_DATA_PRINTED) {
             return;
