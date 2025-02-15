@@ -1,6 +1,11 @@
 package org.kdepo.games.tetris.shared.utils;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kdepo.games.tetris.shared.Constants;
 import org.kdepo.games.tetris.shared.model.Field;
 
@@ -95,7 +100,6 @@ public class FieldUtilsTests {
         FieldUtils.mergeData(fieldData, figureData, currentFigureFieldCellX, currentFigureFieldCellY);
 
         double density = FieldUtils.getFieldDensity(fieldData);
-
         Assertions.assertEquals(0.2d, density, "Field density error!");
 
         System.out.println("FieldUtilsTests.testGetFieldDensity - Tests completed");
@@ -115,22 +119,20 @@ public class FieldUtilsTests {
         fieldData[22][1] = 1;
         fieldData[23][1] = 1;
 
-        DataUtils.printToConsole(fieldData);
+        //DataUtils.printToConsole(fieldData);
 
         double density = FieldUtils.getFieldDensity(fieldData);
-        System.out.println(density);
+        Assertions.assertEquals(0.2d, density, "Field density error!");
 
         fieldData[20][0] = 1;
         fieldData[20][1] = 1;
         fieldData[21][0] = 1;
         fieldData[21][1] = 1;
 
-        DataUtils.printToConsole(fieldData);
+        //DataUtils.printToConsole(fieldData);
 
         density = FieldUtils.getFieldDensity(fieldData);
-        System.out.println(density);
-
-        Assertions.assertEquals(0.2d, density, "Field density error!");
+        Assertions.assertEquals(0.25d, density, "Field density error!");
 
         System.out.println("FieldUtilsTests.testGetFieldDensity2 - Tests completed");
     }
@@ -154,6 +156,49 @@ public class FieldUtilsTests {
         Assertions.assertArrayEquals(expectedHeights2, fieldHeights, "Field heights error!");
 
         System.out.println("FieldUtilsTests.testGetFieldDensity - Tests completed");
+    }
+
+    @Test
+    void testGetFigureLeftmostPosition() {
+        System.out.println("FieldUtilsTests.testGetFigureLeftmostPosition - Tests started");
+
+        int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
+        int[][] figureData = FigureUtils.getFigureData(0, 0);
+
+        int fieldCellX = FieldUtils.getFigureLeftmostPosition(fieldData, figureData);
+        Assertions.assertEquals(0, fieldCellX, "Leftmost position error!");
+
+        System.out.println("FieldUtilsTests.testGetFigureLeftmostPosition - Tests completed");
+    }
+
+    @Test
+    void testGetFigureRightmostPosition() {
+        System.out.println("FieldUtilsTests.testGetFigureRightmostPosition - Tests started");
+
+        int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
+        int[][] figureData = FigureUtils.getFigureData(0, 0);
+
+        int fieldCellX = FieldUtils.getFigureRightmostPosition(fieldData, figureData);
+        Assertions.assertEquals(8, fieldCellX, "Rightmost position error!");
+
+        System.out.println("FieldUtilsTests.testGetFigureRightmostPosition - Tests completed");
+    }
+
+    @Test
+    void testGetFigureLowestPosition() {
+        System.out.println("FieldUtilsTests.testGetFigureLowestPosition - Tests started");
+
+        int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
+        int[][] figureData = FigureUtils.getFigureData(0, 0);
+
+        int fieldCellY = FieldUtils.getFigureLowestPosition(fieldData, figureData, 0);
+        Assertions.assertEquals(20, fieldCellY, "Lowest position error!");
+
+        fieldData[fieldData.length - 1][0] = 1;
+        fieldCellY = FieldUtils.getFigureLowestPosition(fieldData, figureData, 0);
+        Assertions.assertEquals(19, fieldCellY, "Lowest position error!");
+
+        System.out.println("FieldUtilsTests.testGetFigureLowestPosition - Tests completed");
     }
 
     @AfterEach

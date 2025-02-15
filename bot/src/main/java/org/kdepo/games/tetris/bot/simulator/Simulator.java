@@ -136,7 +136,7 @@ public class Simulator {
             FieldUtils.mergeData(field.getData(), currentFigure.getData(), fieldCellX, fieldCellY);
 
             // Check for the completed lines
-            List<Integer> completedLinesIndexes = FieldUtils.getCompletedLinesIndexes(field.getData());
+            List<Integer> completedLinesIndexes = FieldUtils.getCompletedRowsIndexes(field.getData());
             if (!completedLinesIndexes.isEmpty()) {
                 if (completedLinesIndexes.size() == 1) {
                     result.addLinesCount1();
@@ -156,11 +156,11 @@ public class Simulator {
 
                 }
 
-                FieldUtils.removeLines(field.getData(), completedLinesIndexes);
+                FieldUtils.removeRows(field.getData(), completedLinesIndexes);
             }
 
             // Check for end game
-            if (FieldUtils.isFieldOverflow(field.getData())) {
+            if (FieldUtils.isFieldOverflowing(field.getData())) {
                 result.setGameOver();
                 break;
 

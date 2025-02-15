@@ -257,10 +257,10 @@ public class GameScreen extends AbstractScreen {
 
                         updateStatisticsFigures(leftStatistics, leftCurrentFigure);
 
-                        List<Integer> completedLinesIndexes = FieldUtils.getCompletedLinesIndexes(leftField.getData());
+                        List<Integer> completedLinesIndexes = FieldUtils.getCompletedRowsIndexes(leftField.getData());
                         if (!completedLinesIndexes.isEmpty()) {
                             updateStatisticsScore(leftStatistics, completedLinesIndexes.size());
-                            FieldUtils.removeLines(leftField.getData(), completedLinesIndexes);
+                            FieldUtils.removeRows(leftField.getData(), completedLinesIndexes);
 
                             // Print this type of statistics for human play only
                             if (botAtLeft == null && leftStatistics.getLines() >= 100) {
@@ -270,7 +270,7 @@ public class GameScreen extends AbstractScreen {
                             }
                         }
 
-                        if (FieldUtils.isFieldOverflow(leftField.getData())) {
+                        if (FieldUtils.isFieldOverflowing(leftField.getData())) {
                             //System.out.println("Game Over (Left)");
                             isLeftGameOver = true;
 
@@ -313,13 +313,13 @@ public class GameScreen extends AbstractScreen {
 
                         updateStatisticsFigures(rightStatistics, rightCurrentFigure);
 
-                        List<Integer> completedLinesIndexes = FieldUtils.getCompletedLinesIndexes(rightField.getData());
+                        List<Integer> completedLinesIndexes = FieldUtils.getCompletedRowsIndexes(rightField.getData());
                         if (!completedLinesIndexes.isEmpty()) {
                             updateStatisticsScore(rightStatistics, completedLinesIndexes.size());
-                            FieldUtils.removeLines(rightField.getData(), completedLinesIndexes);
+                            FieldUtils.removeRows(rightField.getData(), completedLinesIndexes);
                         }
 
-                        if (FieldUtils.isFieldOverflow(rightField.getData())) {
+                        if (FieldUtils.isFieldOverflowing(rightField.getData())) {
                             //System.out.println("Game Over (Right)");
                             isRightGameOver = true;
 

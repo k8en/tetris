@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.kdepo.games.tetris.bot.model.BotAction;
 import org.kdepo.games.tetris.shared.Constants;
 import org.kdepo.games.tetris.shared.utils.DataUtils;
-import org.kdepo.games.tetris.shared.utils.FigureUtils;
 
 public class SimpleBotTests {
 
@@ -118,54 +117,6 @@ public class SimpleBotTests {
         } while (botAction != null);
 
         System.out.println("SimpleBotTests.testThink - Tests completed");
-    }
-
-
-
-    @Test
-    void testGetFigureLeftmostPosition() {
-        System.out.println("SimpleBotTests.testGetFigureLeftmostPosition - Tests started");
-
-        int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
-        int[][] figureData = FigureUtils.getFigureData(0, 0);
-
-        SimpleBot simpleBot = new SimpleBot();
-        int fieldCellX = simpleBot.getFigureLeftmostPosition(fieldData, figureData);
-        Assertions.assertEquals(0, fieldCellX, "Leftmost position error!");
-
-        System.out.println("SimpleBotTests.testGetFigureLeftmostPosition - Tests completed");
-    }
-
-    @Test
-    void testGetFigureRightmostPosition() {
-        System.out.println("SimpleBotTests.testGetFigureRightmostPosition - Tests started");
-
-        int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
-        int[][] figureData = FigureUtils.getFigureData(0, 0);
-
-        SimpleBot simpleBot = new SimpleBot();
-        int fieldCellX = simpleBot.getFigureRightmostPosition(fieldData, figureData);
-        Assertions.assertEquals(8, fieldCellX, "Rightmost position error!");
-
-        System.out.println("SimpleBotTests.testGetFigureRightmostPosition - Tests completed");
-    }
-
-    @Test
-    void testGetFigureLowestPosition() {
-        System.out.println("SimpleBotTests.testGetFigureLowestPosition - Tests started");
-
-        int[][] fieldData = new int[Constants.FIELD_BLOCKS_VERTICALLY + Constants.FIELD_ROWS_HIDDEN][Constants.FIELD_BLOCKS_HORIZONTALLY];
-        int[][] figureData = FigureUtils.getFigureData(0, 0);
-
-        SimpleBot simpleBot = new SimpleBot();
-        int fieldCellY = simpleBot.getFigureLowestPosition(fieldData, figureData, 0);
-        Assertions.assertEquals(20, fieldCellY, "Lowest position error!");
-
-        fieldData[fieldData.length - 1][0] = 1;
-        fieldCellY = simpleBot.getFigureLowestPosition(fieldData, figureData, 0);
-        Assertions.assertEquals(19, fieldCellY, "Lowest position error!");
-
-        System.out.println("SimpleBotTests.testGetFigureLowestPosition - Tests completed");
     }
 
     @AfterEach

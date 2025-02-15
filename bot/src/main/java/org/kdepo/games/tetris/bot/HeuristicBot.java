@@ -51,15 +51,15 @@ public class HeuristicBot extends SimpleBot {
             int[][] currentFigureData = FigureUtils.getFigureData(currentFigureId, currentFigureOrientationId + rotationCurrentFigure);
 
             // Resolve minimal available left cell position after the current figure rotation
-            int minFieldCellXCurrentFigure = getFigureLeftmostPosition(fieldData, currentFigureData);
+            int minFieldCellXCurrentFigure = FieldUtils.getFigureLeftmostPosition(fieldData, currentFigureData);
 
             // Resolve maximal available right cell position after the current figure rotation
-            int maxFieldCellXCurrentFigure = getFigureRightmostPosition(fieldData, currentFigureData);
+            int maxFieldCellXCurrentFigure = FieldUtils.getFigureRightmostPosition(fieldData, currentFigureData);
 
             // Check for all positions from left to right for the current figure
             for (int fieldCellXCurrentFigure = minFieldCellXCurrentFigure; fieldCellXCurrentFigure <= maxFieldCellXCurrentFigure; fieldCellXCurrentFigure++) {
                 // Drop down
-                int fieldCellYCurrentFigure = getFigureLowestPosition(fieldData, currentFigureData, fieldCellXCurrentFigure);
+                int fieldCellYCurrentFigure = FieldUtils.getFigureLowestPosition(fieldData, currentFigureData, fieldCellXCurrentFigure);
 
                 // Merge figure data to field
                 int[][] currentFieldData = DataUtils.clone(fieldData);
@@ -71,15 +71,15 @@ public class HeuristicBot extends SimpleBot {
                     int[][] nextFigureData = FigureUtils.getFigureData(nextFigureId, nextFigureOrientationId + rotationNextFigure);
 
                     // Resolve minimal available left cell position after the next figure rotation
-                    int minFieldCellXNextFigure = getFigureLeftmostPosition(currentFieldData, nextFigureData);
+                    int minFieldCellXNextFigure = FieldUtils.getFigureLeftmostPosition(currentFieldData, nextFigureData);
 
                     // Resolve maximal available right cell position after the next figure rotation
-                    int maxFieldCellXNextFigure = getFigureRightmostPosition(currentFieldData, nextFigureData);
+                    int maxFieldCellXNextFigure = FieldUtils.getFigureRightmostPosition(currentFieldData, nextFigureData);
 
                     // Check for all positions from left to right for the next figure
                     for (int fieldCellXNextFigure = minFieldCellXNextFigure; fieldCellXNextFigure <= maxFieldCellXNextFigure; fieldCellXNextFigure++) {
                         // Drop down
-                        int fieldCellYNextFigure = getFigureLowestPosition(currentFieldData, nextFigureData, fieldCellXNextFigure);
+                        int fieldCellYNextFigure = FieldUtils.getFigureLowestPosition(currentFieldData, nextFigureData, fieldCellXNextFigure);
 
                         // Merge figure data to field
                         int[][] nextFieldData = DataUtils.clone(currentFieldData);
@@ -87,32 +87,27 @@ public class HeuristicBot extends SimpleBot {
 
                         // Estimate field configuration
                         double currentEstimation = estimateFieldData(nextFieldData);
-//                        System.out.println("Current = " + currentEstimation + ", best=" + bestEstimation);
 
                         // Update best results
                         if (Double.compare(currentEstimation, bestEstimation) >= 1) {
                             bestEstimation = currentEstimation;
                             additionalFigureRotations = rotationCurrentFigure;
                             bestFigureFieldCellX = fieldCellXCurrentFigure;
-//                            System.out.println("estimation=" + bestEstimation + ", additionalFigureRotations=" + additionalFigureRotations + ", bestFigureFieldCellX=" + bestFigureFieldCellX);
                         }
                     }
                 }
             }
         }
 
-//        System.out.println("Best=" + bestEstimation);
-
         // Convert results to bot actions
         botActionList = prepareActionList(additionalFigureRotations, currentFigureFieldCellX, bestFigureFieldCellX);
     }
 
     protected double estimateFieldData(int[][] fieldData) {
-
         double estimation = 0;
 
         // Estimate lines completeness
-        int linesCompleted = FieldUtils.getCompletedLinesIndexes(fieldData).size();
+        int linesCompleted = FieldUtils.getCompletedRowsIndexes(fieldData).size();
         if (linesCompleted == 1) {
             estimation = estimation + 100;
         } else if (linesCompleted == 2) {

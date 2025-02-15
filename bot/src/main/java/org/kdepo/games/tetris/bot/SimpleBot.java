@@ -29,15 +29,15 @@ public class SimpleBot extends AbstractBot {
             int[][] currentFigureData = FigureUtils.getFigureData(currentFigureId, currentFigureOrientationId + rotationCurrentFigure);
 
             // Resolve minimal available left cell position after the current figure rotation
-            int minFieldCellXCurrentFigure = getFigureLeftmostPosition(fieldData, currentFigureData);
+            int minFieldCellXCurrentFigure = FieldUtils.getFigureLeftmostPosition(fieldData, currentFigureData);
 
             // Resolve maximal available right cell position after the current figure rotation
-            int maxFieldCellXCurrentFigure = getFigureRightmostPosition(fieldData, currentFigureData);
+            int maxFieldCellXCurrentFigure = FieldUtils.getFigureRightmostPosition(fieldData, currentFigureData);
 
             // Check for all positions from left to right for the current figure
             for (int fieldCellXCurrentFigure = minFieldCellXCurrentFigure; fieldCellXCurrentFigure <= maxFieldCellXCurrentFigure; fieldCellXCurrentFigure++) {
                 // Drop down
-                int fieldCellYCurrentFigure = getFigureLowestPosition(fieldData, currentFigureData, fieldCellXCurrentFigure);
+                int fieldCellYCurrentFigure = FieldUtils.getFigureLowestPosition(fieldData, currentFigureData, fieldCellXCurrentFigure);
 
                 // Merge figure data to field
                 int[][] currentFieldData = DataUtils.clone(fieldData);
@@ -90,52 +90,6 @@ public class SimpleBot extends AbstractBot {
 
         // Convert results to bot actions
         botActionList = prepareActionList(additionalFigureRotations, currentFigureFieldCellX, bestFigureFieldCellX);
-    }
-
-    /**
-     * Returns figure leftmost available position
-     *
-     * @param fieldData  field data
-     * @param figureData figure data
-     * @return leftmost available position
-     */
-    protected int getFigureLeftmostPosition(int[][] fieldData, int[][] figureData) {
-        int minFieldCellX = 3;
-        while (FieldUtils.canMoveLeft(fieldData, figureData, minFieldCellX, 0)) {
-            minFieldCellX--;
-        }
-        return minFieldCellX;
-    }
-
-    /**
-     * Returns figure rightmost available position
-     *
-     * @param fieldData  field data
-     * @param figureData figure data
-     * @return rightmost available position
-     */
-    protected int getFigureRightmostPosition(int[][] fieldData, int[][] figureData) {
-        int maxFieldCellX = 3;
-        while (FieldUtils.canMoveRight(fieldData, figureData, maxFieldCellX, 0)) {
-            maxFieldCellX++;
-        }
-        return maxFieldCellX;
-    }
-
-    /**
-     * Returns figure lowest available position
-     *
-     * @param fieldData  field data
-     * @param figureData figure data
-     * @param fieldCellX horizontal position on a field
-     * @return lowest available position
-     */
-    protected int getFigureLowestPosition(int[][] fieldData, int[][] figureData, int fieldCellX) {
-        int fieldCellY = 0;
-        while (FieldUtils.canMoveDown(fieldData, figureData, fieldCellX, fieldCellY)) {
-            fieldCellY++;
-        }
-        return fieldCellY;
     }
 
     /**
